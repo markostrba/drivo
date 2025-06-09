@@ -9,10 +9,62 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-poppins: var(--font-poppins);
+  --color-light-1: #333f4e;
+  --color-light-2: #a3b2c7;
+  --color-light-3: #f2f5f9;
+  --color-dark-1: #04050c;
+  --color-dark-2: #131524;
+  --color-dark-3: #f2f5f9;
+  --color-brand: #fa7275;
+  --color-red: #ff7474;
+  --color-blue: #56b8ff;
+  --color-green: #3dd9b3;
+  --color-pink: #eea8fd;
+  --color-orange: #f9ab72;
 }
 
-@theme {
-  --font-poppins: var(--font-poppins);
+@utility h1 {
+  @apply font-bold text-[46px] leading-[56px];
+}
+
+@utility h2 {
+  @apply font-bold text-[24px] leading-[36px];
+}
+
+@utility h3 {
+  @apply font-semibold text-[20px] leading-[26px];
+}
+
+@utility h4 {
+  @apply font-medium text-[18px] leading-[20px];
+}
+
+@utility h5 {
+  @apply font-semibold text-[16px] leading-[24px];
+}
+
+@utility subtitle-1 {
+  @apply font-medium text-[16px] leading-[24px];
+}
+
+@utility subtitle-2 {
+  @apply font-semibold text-[14px] leading-[20px];
+}
+
+@utility body-1 {
+  @apply font-normal text-[16px] leading-[24px];
+}
+
+@utility body-2 {
+  @apply font-normal text-[14px] leading-[20px];
+}
+
+@utility button {
+  @apply font-semibold text-[15px] leading-[20px];
+}
+
+@utility caption {
+  @apply font-normal text-[12px] leading-[16px];
 }
 
 @media (prefers-color-scheme: dark) {

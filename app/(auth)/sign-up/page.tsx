@@ -1,3 +1,4 @@
+import AuthForm from "@/components/AuthForm";
 import React from "react";
 
 export const metadata = {
@@ -5,7 +6,7 @@ export const metadata = {
 };
 
 const SignUpPage = () => {
-  return <div>SignUpPage</div>;
+  return <AuthForm formType="SIGN_UP" />;
 };
 
 export default SignUpPage;

@@ -14,7 +14,7 @@ import { validate } from "../utils";
 import handleError from "../handlers/error";
 import { ActionResponse, ErrorResponse } from "@/types/global";
 
-const getUserByEmail = async ({ email }: GetUserByEmailProps) => {
+const getUserByEmail = async ({ email }: GetUserByEmailParams) => {
   const { databases } = await createAdminClient();
 
   console.log(email);
@@ -30,7 +30,7 @@ const getUserByEmail = async ({ email }: GetUserByEmailProps) => {
 };
 
 export const sendEmailOTP = async (
-  params: SendEmailOTPProps,
+  params: SendEmailOTPParams,
 ): Promise<ActionResponse<{ accountId: string }>> => {
   try {
     const validationResult = await validate({
@@ -56,7 +56,7 @@ export const sendEmailOTP = async (
 };
 
 export const verifyEmailOTP = async (
-  params: VerifyEmailOTPProps,
+  params: VerifyEmailOTPParams,
 ): Promise<ActionResponse<{ sessionId: string }>> => {
   try {
     const validationResult = await validate({
@@ -88,7 +88,7 @@ export const verifyEmailOTP = async (
 };
 
 export const createAccount = async (
-  params: CreateAccountProps,
+  params: CreateAccountParams,
 ): Promise<ActionResponse<{ accountId: string }>> => {
   try {
     const validationResult = await validate({ params, schema: SignUpSchema });

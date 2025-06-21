@@ -1,17 +1,21 @@
-interface GetUserByEmailProps {
+interface GetUserByEmailParams {
   email: string;
 }
 
-interface SendEmailOTPProps {
+interface SendEmailOTPParams {
   email: string;
 }
 
-interface VerifyEmailOTPProps {
+interface VerifyEmailOTPParams {
   accountId: string;
   otpCode: string;
 }
 
-interface CreateAccountProps {
+interface CreateAccountParams {
   fullName: string;
+  email: string;
+}
+
+interface SignInParams {
   email: string;
 }

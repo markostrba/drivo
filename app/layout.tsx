@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
-
+import { Toaster } from "@/components/ui/sonner";
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-poppins",
+  subsets: ["latin"],
+});
+
+const inter = Inter({
+  weight: ["500"],
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -21,7 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} antialiased`}>{children}</body>
+      <body className={`${poppins.variable} ${inter.variable} antialiased`}>
+        {children}
+        <Toaster richColors />
+      </body>
     </html>
   );
 }

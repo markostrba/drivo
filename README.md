@@ -1,10 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 - [x] signUp action
-- [] OTP modal
-- [] authForm submit - signup + otp
-- [] create types
-- [] create errorHandler
+- [x] OTP modal
+- [x] authForm submit - signup + otp
+- [x] create types
+- [x] create errorHandler
+- [] signIn page
 
 ## Getting Started
 

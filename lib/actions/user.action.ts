@@ -5,16 +5,23 @@ import { createAdminClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
 import { avatarPlaceholderUrl } from "@/constants";
 import { cookies } from "next/headers";
+import {
+  SendEmailOTPSchema,
+  SignUpSchema,
+  VerifyEmailOTPSchema,
+} from "../validations";
+import { validate } from "../utils";
+import handleError from "../handlers/error";
+import { ActionResponse, ErrorResponse } from "@/types/global";
 
-const getUserByEmail = async (email: string) => {
+const getUserByEmail = async ({ email }: GetUserByEmailProps) => {
   const { databases } = await createAdminClient();
 
   console.log(email);
   const result = await databases.listDocuments(
     appwriteConfig.databaseId,
     appwriteConfig.usersCollectionId,
-    // eslint-disable-next-line prettier/prettier
-    [Query.equal("email", [email])]
+    [Query.equal("email", [email])],
   );
 
   console.log("getUserByEmail", result.documents[0]);
@@ -22,21 +29,47 @@ const getUserByEmail = async (email: string) => {
   return result.total > 0 ? result.documents[0] : null;
 };
 
-export const sendEmailOTP = async (email: string) => {
-  const { account } = await createAdminClient();
-
+export const sendEmailOTP = async (
+  params: SendEmailOTPProps,
+): Promise<ActionResponse<{ accountId: string }>> => {
   try {
+    const validationResult = await validate({
+      params,
+      schema: SendEmailOTPSchema,
+    });
+
+    if (validationResult instanceof Error) {
+      return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { email } = validationResult.params!;
+
+    const { account } = await createAdminClient();
     const session = await account.createEmailToken(ID.unique(), email);
     console.log("sendOTP session", session);
 
-    return session.userId;
+    return { success: true, data: { accountId: session.userId } };
   } catch (error) {
     console.log(error, "Failed to send email OTP");
+    return handleError(error) as ErrorResponse;
   }
 };
 
-export const verifyEmailOTP = async (accountId: string, otpCode: string) => {
+export const verifyEmailOTP = async (
+  params: VerifyEmailOTPProps,
+): Promise<ActionResponse<{ sessionId: string }>> => {
   try {
+    const validationResult = await validate({
+      params,
+      schema: VerifyEmailOTPSchema,
+    });
+
+    if (validationResult instanceof Error) {
+      return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { accountId, otpCode } = validationResult.params;
+    console.log("accountId", accountId);
     const { account } = await createAdminClient();
 
     const session = await account.createSession(accountId, otpCode);
@@ -48,43 +81,48 @@ export const verifyEmailOTP = async (accountId: string, otpCode: string) => {
       secure: true,
     });
 
-    return JSON.parse(JSON.stringify({ sessionId: session.$id }));
+    return { success: true, data: { sessionId: session.$id } };
   } catch (error) {
-    console.log(error, "failed to verify otp");
+    return handleError(error) as ErrorResponse;
   }
 };
 
-export const createAccount = async ({
-  fullName,
-  email,
-}: {
-  fullName: string;
-  email: string;
-}) => {
-  console.log("createAcc", fullName, email);
-  const existingUser = await getUserByEmail(email);
-  console.log("existing user", existingUser);
+export const createAccount = async (
+  params: CreateAccountProps,
+): Promise<ActionResponse<{ accountId: string }>> => {
+  try {
+    const validationResult = await validate({ params, schema: SignUpSchema });
 
-  const accountId = await sendEmailOTP(email);
-  console.log("createAccount accountId", accountId);
+    if (validationResult instanceof Error) {
+      return handleError(validationResult) as ErrorResponse;
+    }
 
-  if (!accountId) throw new Error("Failed to send an OTP");
+    const { fullName, email } = validationResult.params!;
 
-  if (!existingUser) {
-    const { databases } = await createAdminClient();
+    const existingUser = await getUserByEmail({ email });
 
-    await databases.createDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.usersCollectionId,
-      ID.unique(),
-      {
-        fullName,
-        email,
-        avatar: avatarPlaceholderUrl,
-        accountId,
-        // eslint-disable-next-line prettier/prettier
-      }
-    );
+    const otpResponse = await sendEmailOTP({ email });
+
+    if (!otpResponse.data?.accountId) throw new Error("Failed to send an OTP");
+
+    if (!existingUser) {
+      const { databases } = await createAdminClient();
+
+      await databases.createDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.usersCollectionId,
+        ID.unique(),
+        {
+          fullName,
+          email,
+          avatar: avatarPlaceholderUrl,
+          accountId: otpResponse.data.accountId,
+        },
+      );
+    }
+
+    return { success: true, data: { accountId: otpResponse.data.accountId } };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
   }
-  return JSON.parse(JSON.stringify(accountId));
 };

@@ -7,6 +7,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-poppins: var(--font-poppins);
+  --font-inter: var(--font-inter);
   --color-light-1: #333f4e;
   --color-light-2: #a3b2c7;
   --color-light-3: #f2f5f9;
@@ -53,6 +54,17 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer utilities {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    box-shadow: 0 0 0px 1000px white inset !important;
+    -webkit-text-fill-color: #333f4e !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
 }
 
 @utility h1 {

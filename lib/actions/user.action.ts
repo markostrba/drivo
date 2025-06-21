@@ -7,6 +7,7 @@ import { avatarPlaceholderUrl } from "@/constants";
 import { cookies } from "next/headers";
 import {
   SendEmailOTPSchema,
+  SignInSchema,
   SignUpSchema,
   VerifyEmailOTPSchema,
 } from "../validations";
@@ -73,7 +74,7 @@ export const verifyEmailOTP = async (
     const { account } = await createAdminClient();
 
     const session = await account.createSession(accountId, otpCode);
-
+    console.log("session verify", session);
     (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
       httpOnly: true,
@@ -83,6 +84,7 @@ export const verifyEmailOTP = async (
 
     return { success: true, data: { sessionId: session.$id } };
   } catch (error) {
+    console.log(error);
     return handleError(error) as ErrorResponse;
   }
 };
@@ -122,6 +124,31 @@ export const createAccount = async (
     }
 
     return { success: true, data: { accountId: otpResponse.data.accountId } };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+};
+
+export const signIn = async (
+  params: SignInParams,
+): Promise<ActionResponse<{ accountId: string }>> => {
+  try {
+    const validationResult = await validate({ params, schema: SignInSchema });
+
+    if (validationResult instanceof Error) {
+      return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { email } = validationResult.params!;
+
+    console.log("signin", email);
+
+    const existingUser = await getUserByEmail({ email });
+    console.log("signin existingUser", existingUser.accountId);
+
+    await sendEmailOTP({ email });
+
+    return { success: true, data: { accountId: existingUser?.accountId } };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

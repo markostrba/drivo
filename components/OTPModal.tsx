@@ -34,7 +34,7 @@ const OTPModal = ({
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("start");
+    console.log("handleSubmit", accountId, otp);
     const { success, data, error } = await verifyEmailOTP({
       accountId,
       otpCode: otp,

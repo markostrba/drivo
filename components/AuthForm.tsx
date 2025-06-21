@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { SignInSchema, SignUpSchema } from "@/lib/validations";
-import { createAccount } from "@/lib/actions/user.action";
+import { createAccount, signIn } from "@/lib/actions/user.action";
 import OTPModal from "./OTPModal";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -40,7 +40,17 @@ const AuthForm = ({ formType }: Props) => {
   async function onSubmit(
     values: z.infer<typeof SignInSchema | typeof SignUpSchema>,
   ) {
-    if (!isSignIn) {
+    if (isSignIn) {
+      const result = await signIn(values as z.infer<typeof SignInSchema>);
+      if (result.success && result.data) {
+        setIsOtpOpen(true);
+        setAccountId(result.data?.accountId);
+        console.log(result.data, "sgfofs");
+      } else {
+        console.log(result.error);
+        toast.error(result.error?.message);
+      }
+    } else {
       const result = await createAccount(
         values as z.infer<typeof SignUpSchema>,
       );

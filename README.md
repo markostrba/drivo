@@ -5,7 +5,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - [x] authForm submit - signup + otp
 - [x] create types
 - [x] create errorHandler
-- [] signIn page
+- [x] signIn page
+- [] root layout
 
 ## Getting Started
 

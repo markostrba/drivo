@@ -144,7 +144,6 @@ export const signIn = async (
     console.log("signin", email);
 
     const existingUser = await getUserByEmail({ email });
-    console.log("signin existingUser", existingUser.accountId);
 
     await sendEmailOTP({ email });
 

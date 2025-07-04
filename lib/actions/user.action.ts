@@ -1,7 +1,7 @@
 "use server";
 
 import { ID, Query } from "node-appwrite";
-import { createAdminClient } from "../appwrite";
+import { createAdminClient, createSessionClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
 import { avatarPlaceholderUrl } from "@/constants";
 import { cookies } from "next/headers";
@@ -13,7 +13,8 @@ import {
 } from "../validations";
 import { validate } from "../utils";
 import handleError from "../handlers/error";
-import { ActionResponse, ErrorResponse } from "@/types/global";
+import { ActionResponse, ErrorResponse, User } from "@/types/global";
+import { UnauthorizedError } from "../http-errors";
 
 const getUserByEmail = async ({ email }: GetUserByEmailParams) => {
   const { databases } = await createAdminClient();
@@ -148,6 +149,25 @@ export const signIn = async (
     await sendEmailOTP({ email });
 
     return { success: true, data: { accountId: existingUser?.accountId } };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+};
+
+export const getCurrentUser = async (): Promise<ActionResponse<User>> => {
+  try {
+    const { databases, account } = await createSessionClient();
+
+    const result = await account.get();
+    const user = await databases.listDocuments<User>(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId,
+      [Query.equal("accountId", result.$id)],
+    );
+
+    if (user.total <= 0) throw new UnauthorizedError("User session not found");
+
+    return { success: true, data: user.documents[0] };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

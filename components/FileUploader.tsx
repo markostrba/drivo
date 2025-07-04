@@ -15,11 +15,11 @@ interface Props {
 
 const FileUploader = ({ ownerId, accountId }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
+  const [canceledFiles, setCanceledFiles] = useState<Set<string>>(new Set());
   const pathname = usePathname();
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       setFiles(acceptedFiles);
-      await new Promise((resolve) => setTimeout(resolve, 30000));
 
       const uploadPromises = acceptedFiles.map(async (file) => {
         if (file.size > MAX_FILE_SIZE) {
@@ -36,10 +36,9 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
             className: "!text-white !bg-red !rounded-[10px]",
           });
         }
-
+        if (canceledFiles.has(file.name)) return;
         return uploadFile({ file, ownerId, accountId, pathname })
           .then((uploadFile) => {
-            console.log("upload file", uploadFile);
             if (uploadFile) {
               setFiles((prevFiles) =>
                 prevFiles.filter((prevFile) => prevFile.name !== file.name),
@@ -60,16 +59,28 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
 
       await Promise.all(uploadPromises);
     },
-    [ownerId, accountId, pathname],
+    [ownerId, accountId, pathname, canceledFiles],
   );
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
+    noClick: true,
   });
+
+  const handleDelete = (e: React.MouseEvent, fileName: string) => {
+    e.stopPropagation();
+    setCanceledFiles((prev) => new Set(prev).add(fileName));
+    setFiles((prevFiles) =>
+      prevFiles.filter((prevFile) => prevFile.name !== fileName),
+    );
+  };
 
   return (
     <div {...getRootProps()}>
       <input {...getInputProps()} />
-      <Button className="bg-brand hover:bg-brand-100 flex h-[52px] gap-2 rounded-[41px] px-10 shadow-[0_8px_30px_0_rgba(65,89,214,0.3)]">
+      <Button
+        className="bg-brand hover:bg-brand-100 flex h-[52px] gap-2 rounded-[41px] px-10 shadow-[0_8px_30px_0_rgba(65,89,214,0.3)]"
+        onClick={open}
+      >
         <Image
           src="/assets/icons/upload.svg"
           alt="upload"
@@ -111,7 +122,8 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
                   width={24}
                   height={24}
                   alt="Remove"
-                  onClick={() => {}}
+                  onClick={(e) => handleDelete(e, file.name)}
+                  className="cursor-pointer"
                 />
               </li>
             );

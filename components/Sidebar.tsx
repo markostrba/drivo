@@ -2,7 +2,12 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import NavLinks from "./NavLinks";
-const Sidebar = () => {
+import { User } from "@/types/global";
+const Sidebar = ({
+  fullName,
+  email,
+  avatar,
+}: Pick<User, "fullName" | "email" | "avatar">) => {
   return (
     <aside className="remove-scrollbar hidden h-full flex-col overflow-auto sm:flex">
       <div className="flex h-full min-w-[90px] flex-col justify-stretch px-4 lg:px-2 xl:px-4">
@@ -27,16 +32,16 @@ const Sidebar = () => {
         <NavLinks />
         <div className="flex justify-center gap-[14px] lg:justify-start">
           <Image
-            src="/assets/images/avatar.png"
+            src={avatar}
             alt="avatar"
             width={60}
             height={60}
             className="aspect-square rounded-full object-cover"
           />
           <div className="hidden flex-col lg:flex">
-            <span className="h5 text-light-1 gap-0.5">Adrian JSM</span>
+            <span className="h5 text-light-1 gap-0.5">{fullName}</span>
             <span className="text-light-2 text-xs leading-[24px] xl:text-[14px]">
-              adrian@jsmastery.pro
+              {email}
             </span>
           </div>
         </div>

@@ -1,11 +1,17 @@
 import React from "react";
 import Search from "./Search";
 import FileUploader from "./FileUploader";
-const Header = () => {
+
+interface Props {
+  accountId: string;
+  ownerId: string;
+}
+
+const Header = ({ accountId, ownerId }: Props) => {
   return (
     <header className="hidden items-center justify-between gap-5 p-5 sm:flex">
       <Search />
-      <FileUploader />
+      <FileUploader accountId={accountId} ownerId={ownerId} />
     </header>
   );
 };

@@ -1,3 +1,4 @@
+import Card from "@/components/Card";
 import { getFiles } from "@/lib/actions/file.action";
 import { getCurrentUser } from "@/lib/actions/user.action";
 import { convertFileSize, getFileTypesParams } from "@/lib/utils";
@@ -45,9 +46,7 @@ const Page = async ({ params }: { params: Promise<{ type: string }> }) => {
           {result.data?.total ? (
             <section className="grid w-full gap-6.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {result.data.documents.map((file) => (
-                <div key={file.name} className="border-red border">
-                  {file.name}
-                </div>
+                <Card key={file.$id} file={file} />
               ))}
             </section>
           ) : (

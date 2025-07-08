@@ -19,3 +19,9 @@ interface CreateAccountParams {
 interface SignInParams {
   email: string;
 }
+
+interface GetFilesParams {
+  currentUserId: string;
+  currentUserEmail: string;
+  type: string[];
+}

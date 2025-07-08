@@ -140,6 +140,21 @@ export const getFileIcon = (
   }
 };
 
+export const getFileTypesParams = (type: string) => {
+  switch (type) {
+    case "documents":
+      return ["document"];
+    case "images":
+      return ["image"];
+    case "media":
+      return ["video", "audio"];
+    case "others":
+      return ["other"];
+    default:
+      return ["document"];
+  }
+};
+
 export function generateImageUrl(bucketFieldId: string) {
   return `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.bucketId}/files/${bucketFieldId}/view?project=${appwriteConfig.projectId}`;
 }

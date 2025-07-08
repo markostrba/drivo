@@ -26,3 +26,9 @@ export const VerifyEmailOTPSchema = z.object({
 export const SendEmailOTPSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
 });
+
+export const GetFilesSchema = z.object({
+  currentUserId: z.string(),
+  currentUserEmail: z.string().email({ message: "Invalid email" }),
+  type: z.array(z.enum(["document", "image", "video", "audio", "other"])),
+});

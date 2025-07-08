@@ -5,26 +5,48 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { MAX_FILE_SIZE } from "@/constants";
 import { toast } from "sonner";
-import { uploadFile } from "@/lib/actions/file.action";
-import { usePathname } from "next/navigation";
+// import { uploadFile } from "@/lib/actions/file.action";
 import { convertFileToUrl } from "@/lib/utils";
+import useUploadFile from "@/hooks/useUploadFile";
+import { UploadProgress } from "appwrite";
+import { Progress } from "@/components/ui/progress";
 interface Props {
   accountId: string;
   ownerId: string;
 }
 
 const FileUploader = ({ ownerId, accountId }: Props) => {
-  const [files, setFiles] = useState<File[]>([]);
-  const [canceledFiles, setCanceledFiles] = useState<Set<string>>(new Set());
-  const pathname = usePathname();
+  const [files, setFiles] = useState<{ file: File; progress: number }[]>([]);
+  const { uploadFile, cancelUploadFile } = useUploadFile({
+    accountId,
+    ownerId,
+  });
+
+  const onProgress = (progress: UploadProgress, fileName: string) => {
+    console.log("progress", progress, fileName);
+    setFiles((prevFiles) =>
+      prevFiles.map((prevFile) =>
+        prevFile.file.name === fileName
+          ? { ...prevFile, progress: progress.progress }
+          : prevFile,
+      ),
+    );
+    // setFiles((prevFiles) =>
+    //   prevFiles.map(
+    //     ({ file, progress }) =>
+    //       file.name === fileName && { file, progress: progress.progress },
+    //   ),
+    // );
+  };
+
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      setFiles(acceptedFiles);
+      setFiles(acceptedFiles.map((file) => ({ file, progress: 0 })));
 
       const uploadPromises = acceptedFiles.map(async (file) => {
         if (file.size > MAX_FILE_SIZE) {
           setFiles((files) =>
-            files.filter((prevFile) => prevFile.name !== file.name),
+            files.filter(({ file: prevFile }) => prevFile.name !== file.name),
           );
 
           return toast(file.name, {
@@ -36,12 +58,14 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
             className: "!text-white !bg-red !rounded-[10px]",
           });
         }
-        if (canceledFiles.has(file.name)) return;
-        return uploadFile({ file, ownerId, accountId, pathname })
+
+        return uploadFile(file, onProgress)
           .then((uploadFile) => {
             if (uploadFile) {
               setFiles((prevFiles) =>
-                prevFiles.filter((prevFile) => prevFile.name !== file.name),
+                prevFiles.filter(
+                  ({ file: prevFile }) => prevFile.name !== file.name,
+                ),
               );
             }
           })
@@ -59,7 +83,7 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
 
       await Promise.all(uploadPromises);
     },
-    [ownerId, accountId, pathname, canceledFiles],
+    [uploadFile],
   );
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
@@ -68,9 +92,9 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
 
   const handleDelete = (e: React.MouseEvent, fileName: string) => {
     e.stopPropagation();
-    setCanceledFiles((prev) => new Set(prev).add(fileName));
+    cancelUploadFile(fileName);
     setFiles((prevFiles) =>
-      prevFiles.filter((prevFile) => prevFile.name !== fileName),
+      prevFiles.filter(({ file: prevFile }) => prevFile.name !== fileName),
     );
   };
 
@@ -92,7 +116,7 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
       {files.length > 0 && (
         <ul className="fixed right-10 bottom-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7 shadow-[0_8px_30px_0_rgba(65,89,214,0.1)]">
           <h4 className="h4 text-light-100">Uploading</h4>
-          {files.map((file, index) => {
+          {files.map(({ file, progress }, index) => {
             return (
               <li
                 key={`${file.name}-${index}`}
@@ -109,12 +133,14 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
                     <span className="subtitle-2 mb-2 line-clamp-1">
                       {file.name}
                     </span>
-                    <Image
+                    <Progress value={progress} className="h-[4px] w-[80px]" />
+
+                    {/* <Image
                       src="/assets/icons/file-loader.gif"
                       width={80}
                       height={56}
                       alt="Loader"
-                    />
+                    /> */}
                   </div>
                 </div>
                 <Image

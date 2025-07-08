@@ -1,7 +1,8 @@
 import { getFiles } from "@/lib/actions/file.action";
 import { getCurrentUser } from "@/lib/actions/user.action";
-import { getFileTypesParams } from "@/lib/utils";
+import { convertFileSize, getFileTypesParams } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import { Models } from "node-appwrite";
 import React from "react";
 
 const Page = async ({ params }: { params: Promise<{ type: string }> }) => {
@@ -16,6 +17,13 @@ const Page = async ({ params }: { params: Promise<{ type: string }> }) => {
     type: getFileTypesParams(type),
   });
 
+  const getTotalSize = (documents?: Models.DocumentList<Models.Document>) => {
+    if (!documents) return "0 B";
+    return convertFileSize(
+      documents.documents.reduce((acc, doc) => acc + doc.size, 0),
+    );
+  };
+
   return (
     <div className="flex flex-col gap-9 pt-[34px] pr-[40px] pb-[58px] pl-[37px]">
       {result.success ? (
@@ -26,7 +34,7 @@ const Page = async ({ params }: { params: Promise<{ type: string }> }) => {
             </h1>
             <div className="flex justify-between">
               <div className="body-1">
-                Total: <span className="h5">12GB</span>
+                Total: <span className="h5">{getTotalSize(result.data)}</span>
               </div>
               <div className="text-light-2 flex gap-2.5 text-[14px] font-medium">
                 Sort by: <div>sort</div>

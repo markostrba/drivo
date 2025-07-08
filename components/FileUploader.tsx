@@ -6,10 +6,11 @@ import Image from "next/image";
 import { MAX_FILE_SIZE } from "@/constants";
 import { toast } from "sonner";
 // import { uploadFile } from "@/lib/actions/file.action";
-import { convertFileToUrl } from "@/lib/utils";
+import { convertFileToUrl, getFileType } from "@/lib/utils";
 import useUploadFile from "@/hooks/useUploadFile";
 import { UploadProgress } from "appwrite";
 import { Progress } from "@/components/ui/progress";
+import Thumbnail from "./Thumbnail";
 interface Props {
   accountId: string;
   ownerId: string;
@@ -117,30 +118,23 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
         <ul className="fixed right-10 bottom-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7 shadow-[0_8px_30px_0_rgba(65,89,214,0.1)]">
           <h4 className="h4 text-light-100">Uploading</h4>
           {files.map(({ file, progress }, index) => {
+            const { type, extension } = getFileType(file.name);
             return (
               <li
                 key={`${file.name}-${index}`}
                 className="flex items-center justify-between gap-3 rounded-xl p-3 shadow-[0_8px_30px_0_rgba(65,89,214,0.1)]"
               >
                 <div className="flex items-center gap-3">
-                  <Image
-                    src={convertFileToUrl(file)}
-                    width={15}
-                    height={15}
-                    alt={file.name}
+                  <Thumbnail
+                    type={type}
+                    extension={extension}
+                    url={convertFileToUrl(file)}
                   />
                   <div className="max-w-[300px]">
                     <span className="subtitle-2 mb-2 line-clamp-1">
                       {file.name}
                     </span>
                     <Progress value={progress} className="h-[4px] w-[80px]" />
-
-                    {/* <Image
-                      src="/assets/icons/file-loader.gif"
-                      width={80}
-                      height={56}
-                      alt="Loader"
-                    /> */}
                   </div>
                 </div>
                 <Image

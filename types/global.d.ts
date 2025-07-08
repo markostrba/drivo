@@ -26,3 +26,5 @@ export interface User extends Models.Document {
   email: string;
   accountId: string;
 }
+
+type FileType = "document" | "image" | "video" | "audio" | "other";

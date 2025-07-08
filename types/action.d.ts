@@ -19,10 +19,3 @@ interface CreateAccountParams {
 interface SignInParams {
   email: string;
 }
-
-interface UploadFileParams {
-  file: File;
-  accountId: string;
-  ownerId: string;
-  pathname: string;
-}

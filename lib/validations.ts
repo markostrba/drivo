@@ -26,10 +26,3 @@ export const VerifyEmailOTPSchema = z.object({
 export const SendEmailOTPSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
 });
-
-export const UploadFileSchema = z.object({
-  file: z.any(),
-  accountId: z.string(),
-  ownerId: z.string(),
-  pathname: z.string(),
-});

@@ -2,6 +2,7 @@ import { Models } from "node-appwrite";
 import Link from "next/link";
 import Thumbnail from "@/components/Thumbnail";
 import { convertFileSize } from "@/lib/utils";
+import FormattedDateTime from "./FormattedDateTime";
 
 const Card = ({ file }: { file: Models.Document }) => {
   return (
@@ -26,8 +27,10 @@ const Card = ({ file }: { file: Models.Document }) => {
 
       <div className="text-light-1 flex flex-col gap-2">
         <p className="subtitle-2 line-clamp-1">{file.name}</p>
-
-        <p className="body-2 text-light-1">3:11am, 8 jul</p>
+        <FormattedDateTime
+          date={file.$createdAt}
+          className="body-2 text-light-1"
+        />
         <p className="caption text-light-2 line-clamp-1">
           By: {file.owner.fullName}
         </p>

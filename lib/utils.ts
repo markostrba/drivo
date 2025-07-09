@@ -174,6 +174,11 @@ export function generateImageUrl(bucketFieldId: string) {
   return `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.bucketId}/files/${bucketFieldId}/view?project=${appwriteConfig.projectId}`;
 }
 
+export const generateDownloadUrl = (bucketFileId: string) => {
+  console.log("bb", bucketFileId);
+  return `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.bucketId}/files/${bucketFileId}/download?project=${appwriteConfig.projectId}`;
+};
+
 export function convertFileToUrl(file: File) {
   return URL.createObjectURL(file);
 }

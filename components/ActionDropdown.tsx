@@ -16,12 +16,18 @@ import { generateDownloadUrl } from "@/lib/utils";
 import { ActionType } from "@/types/global";
 
 import { ActionDialogContent } from "./ActionDialogContent";
+import { usePathname } from "next/navigation";
+import { renameFile } from "@/lib/actions/file.action";
+import { toast } from "sonner";
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [actionDialog, setActionDialog] = useState<ActionType | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState<string>(file.name);
+
+  const pathname = usePathname();
 
   const handleCloseAllModals = () => {
     setIsModalOpen(false);
@@ -33,49 +39,32 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setName(e.target.value);
 
-  // const renderDialogContent = () => {
-  //   if (!actionDialog) return null;
+  const handleAction = async () => {
+    if (!actionDialog) return;
+    setIsLoading(true);
 
-  //   const { value, label } = actionDialog;
+    const actions = {
+      rename: () =>
+        renameFile({
+          fileId: file.$id,
+          name,
+          extension: file.extension,
+          pathname,
+        }),
+    };
 
-  //   return (
-  //     <DialogContent className="button w-[90%] max-w-[400px] rounded-[26px] px-6 py-8">
-  //       <DialogHeader className="flex flex-col gap-3">
-  //         <DialogTitle className="text-light-1 !h3 text-center">
-  //           {label}
-  //         </DialogTitle>
-  //         {value === "rename" && (
-  //           <Input
-  //             type="text"
-  //             value={name}
-  //             onChange={(e) => setName(e.target.value)}
-  //           />
-  //         )}
-  //         {value === "details" && <div>file details</div>}
-  //         {value === "share" && <div>share</div>}
-  //         {value === "delete" && (
-  //           <p className="text-light-1 text-center">
-  //             Are you sure you want to delete{` `}
-  //             <span className="text-brand-100 font-medium">{file.name}</span>?
-  //           </p>
-  //         )}
-  //       </DialogHeader>
-  //       {["rename", "delete", "share"].includes(value) && (
-  //         <DialogFooter className="flex flex-col gap-3 md:flex-row">
-  //           <Button
-  //             onClick={closeAllModals}
-  //             className="text-light-1 h-[52px] flex-1 rounded-full bg-white hover:bg-transparent"
-  //           >
-  //             Cancel
-  //           </Button>
-  //           <Button className="bg-brand hover:bg-brand-100 button !mx-0 h-[52px] w-full flex-1 rounded-full transition-all">
-  //             <p className="capitalize">{value}</p>
-  //           </Button>
-  //         </DialogFooter>
-  //       )}
-  //     </DialogContent>
-  //   );
-  // };
+    const { error, data } =
+      await actions[actionDialog.value as keyof typeof actions]();
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      handleCloseAllModals();
+      setName(data!.name);
+    }
+
+    setIsLoading(false);
+  };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -140,6 +129,8 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
         file={file}
         onCloseAllModals={handleCloseAllModals}
         name={name}
+        onAction={handleAction}
+        isLoading={isLoading}
       />
     </Dialog>
   );

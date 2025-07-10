@@ -4,8 +4,9 @@ import { createSessionClient } from "../appwrite";
 import handleError from "../handlers/error";
 import { appwriteConfig } from "../appwrite/config";
 import { ActionResponse, ErrorResponse } from "@/types/global";
-import { GetFilesSchema } from "../validations";
+import { GetFilesSchema, RenameFileSchema } from "../validations";
 import { validate } from "../utils";
+import { revalidatePath } from "next/cache";
 
 export const createQueries = async (
   currentUserId: string,
@@ -47,6 +48,41 @@ export const getFiles = async (
     );
     console.log({ files });
     return { success: true, data: files };
+  } catch (err) {
+    return handleError(err) as ErrorResponse;
+  }
+};
+
+// fileId, name, extension, pathname
+
+export const renameFile = async (
+  params: RenameFileParams,
+): Promise<ActionResponse<Models.Document>> => {
+  try {
+    const validationResult = await validate({
+      params,
+      schema: RenameFileSchema,
+    });
+
+    if (validationResult instanceof Error) {
+      return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { fileId, name, extension, pathname } = validationResult.params;
+
+    const { databases } = await createSessionClient();
+
+    const newName = `${name}.${extension}`;
+
+    const updateFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      { name: newName },
+    );
+
+    revalidatePath(pathname);
+    return { success: true, data: updateFile };
   } catch (err) {
     return handleError(err) as ErrorResponse;
   }

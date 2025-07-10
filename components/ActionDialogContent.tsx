@@ -9,6 +9,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Models } from "appwrite";
 import { ActionType } from "@/types/global";
+import Image from "next/image";
 
 type File = Models.Document;
 type OnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -18,6 +19,8 @@ interface Props {
   name: string;
   onNameChange: OnNameChange;
   onCloseAllModals: () => void;
+  isLoading: boolean;
+  onAction: () => void;
 }
 
 const FileRename = ({
@@ -49,6 +52,8 @@ export const ActionDialogContent = ({
   file,
   onCloseAllModals,
   name,
+  isLoading,
+  onAction,
 }: Props) => {
   if (!action) return null;
 
@@ -82,8 +87,20 @@ export const ActionDialogContent = ({
               Cancel
             </Button>
           )}
-          <Button className="bg-brand hover:bg-brand-100 button !mx-0 h-[52px] w-full flex-1 rounded-full !shadow-[0_8px_30px_0_rgba(65,89,214,0.1)] transition-all">
+          <Button
+            className="bg-brand hover:bg-brand-100 button !mx-0 h-[52px] w-full flex-1 rounded-full !shadow-[0_8px_30px_0_rgba(65,89,214,0.1)] transition-all"
+            onClick={onAction}
+          >
             <p className="capitalize">{value}</p>
+            {isLoading && (
+              <Image
+                src="/assets/icons/loader.svg"
+                alt="loader"
+                width={24}
+                height={24}
+                className="animate-spin"
+              />
+            )}
           </Button>
         </DialogFooter>
       )}

@@ -25,3 +25,10 @@ interface GetFilesParams {
   currentUserEmail: string;
   type: string[];
 }
+
+interface RenameFileParams {
+  fileId: string;
+  name: string;
+  extension: string;
+  pathname: string;
+}

@@ -26,7 +26,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
   const [actionDialog, setActionDialog] = useState<ActionType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState<string>(file.name);
-
+  const [emails, setEmails] = useState<string[]>([]);
   const pathname = usePathname();
 
   const handleCloseAllModals = () => {
@@ -34,10 +34,16 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
     setIsDropdownOpen(false);
     setActionDialog(null);
     setName(file.name);
+    setEmails([]);
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setName(e.target.value);
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmails = e.target.value.trim().split(",");
+    setEmails((prev) => [...prev, ...newEmails]);
+  };
 
   const handleAction = async () => {
     if (!actionDialog) return;
@@ -77,7 +83,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
             height={34}
           />
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="rounded-[20px] border-none !px-6.5 !py-4 shadow-[0_8px_30px_0_rgba(65,89,214,0.1)]">
+        <DropdownMenuContent className="!shadow-1 rounded-[20px] border-none !px-6.5 !py-4">
           <DropdownMenuLabel className="!h3 !text-light-1 mb-2.5 w-[295px] truncate !p-0">
             {file.name}
           </DropdownMenuLabel>
@@ -131,6 +137,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
         name={name}
         onAction={handleAction}
         isLoading={isLoading}
+        onEmailChange={handleEmailChange}
       />
     </Dialog>
   );

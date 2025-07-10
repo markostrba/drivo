@@ -24,8 +24,7 @@ const NavLinks = ({
             key={name}
             className={cn(
               "h5 text-light-1 flex items-center justify-center gap-4.5 rounded-full px-5 py-5 lg:justify-start",
-              pathname === url &&
-                "bg-brand text-white shadow-[0_8px_30px_0_rgba(65,89,214,0.3)]",
+              pathname === url && "bg-brand !shadow-2 text-white",
               className,
             )}
           >

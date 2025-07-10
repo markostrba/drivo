@@ -91,13 +91,13 @@ const OTPModal = ({
           renderInput={(props) => (
             <input
               {...props}
-              className="text-brand-100 placeholder:text-light-3 h2 font-inter h-[60px] flex-1 rounded-[12px] px-2 py-2.5 font-medium! shadow-[0_10px_30px_0_rgba(66,71,97,0.1)] outline-offset-[-3px] outline-red-400 not-placeholder-shown:outline-3 focus:outline-3 sm:h-[80px] sm:text-[48px]/12"
+              className="text-brand-100 placeholder:text-light-3 h2 font-inter !shadow-1 h-[60px] flex-1 rounded-[12px] px-2 py-2.5 font-medium! outline-offset-[-3px] outline-red-400 not-placeholder-shown:outline-3 focus:outline-3 sm:h-[80px] sm:text-[48px]/12"
             />
           )}
         />
         <AlertDialogFooter className="flex flex-col! items-center gap-5">
           <AlertDialogAction
-            className="button bg-brand hover:bg-red h-[50px] w-full rounded-[41px] px-4.5 py-2.5 text-white shadow-[0_8px_30px_0_rgba(65,89,214,0.3)]"
+            className="button bg-brand hover:bg-red !shadow-2 h-[50px] w-full rounded-[41px] px-4.5 py-2.5 text-white"
             disabled={isLoading}
             onClick={handleSubmit}
             type="button"

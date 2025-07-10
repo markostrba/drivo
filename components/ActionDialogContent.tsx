@@ -16,6 +16,7 @@ import { convertFileSize, formatDateTime } from "@/lib/utils";
 
 type File = Models.Document;
 type OnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => void;
+
 interface Props {
   action: ActionType | null;
   file: File;
@@ -24,6 +25,7 @@ interface Props {
   onCloseAllModals: () => void;
   isLoading: boolean;
   onAction: () => void;
+  onEmailChange: OnNameChange;
 }
 
 const ImageThumbnail = ({ file }: { file: File }) => (
@@ -55,7 +57,7 @@ const FileRename = ({
       type="text"
       value={value}
       onChange={(e) => onNameChange(e)}
-      className="text-light-1 !body-2 shad-no-focus h-[52px] rounded-[30px] border-none !p-4 !shadow-[0_8px_30px_0_rgba(65,89,214,0.1)]"
+      className="text-light-1 !body-2 shad-no-focus !shadow-3 h-[52px] rounded-[30px] border-none !p-4"
     />
   );
 };
@@ -76,7 +78,37 @@ const FileDetails = ({ file }: { file: File }) => {
   );
 };
 
-const FileShare = (file: File) => {};
+const FileShare = ({
+  file,
+  onEmailChange,
+  onRemove,
+}: {
+  file: File;
+  onEmailChange: OnNameChange;
+  onRemove: (email: string) => void;
+}) => {
+  return (
+    <div className="flex flex-col gap-7.5">
+      <ImageThumbnail file={file} />
+
+      <div className="share-wrapper text-light-1">
+        <p className="subtitle-2 pl-1">Share file with other users:</p>
+        <Input
+          type="email"
+          placeholder="Enter email address"
+          onChange={(e) => onEmailChange(e)}
+          className="!shadow-3"
+        />
+        <div className="pt-4">
+          <div className="flex justify-between">
+            <p className="subtitle-2 text-light-1">Shared with</p>
+            <p className="subtitle-2 text-light-2">{file.users.length} users</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const ActionDialogContent = ({
   action,
@@ -86,6 +118,7 @@ export const ActionDialogContent = ({
   name,
   isLoading,
   onAction,
+  onEmailChange,
 }: Props) => {
   if (!action) return null;
 
@@ -101,7 +134,13 @@ export const ActionDialogContent = ({
           <FileRename onNameChange={onNameChange} value={name} />
         )}
         {value === "details" && <FileDetails file={file} />}
-        {value === "share" && <div>share</div>}
+        {value === "share" && (
+          <FileShare
+            file={file}
+            onEmailChange={onEmailChange}
+            onRemove={() => {}}
+          />
+        )}
         {value === "delete" && (
           <p className="text-light-1 text-center">
             Are you sure you want to delete{` `}
@@ -120,7 +159,7 @@ export const ActionDialogContent = ({
             </Button>
           )}
           <Button
-            className="bg-brand hover:bg-brand-100 button !mx-0 h-[52px] w-full flex-1 rounded-full !shadow-[0_8px_30px_0_rgba(65,89,214,0.1)] transition-all"
+            className="bg-brand hover:bg-brand-100 button !shadow-2 !mx-0 h-[52px] w-full flex-1 rounded-full transition-all"
             onClick={onAction}
           >
             <p className="capitalize">{value}</p>

@@ -10,7 +10,7 @@ const Card = ({ file }: { file: Models.Document }) => {
     <Link
       href={file.url}
       target="_blank"
-      className="flex cursor-pointer flex-col gap-6 rounded-[18px] bg-white p-5 shadow-sm transition-all hover:shadow-[0_8px_30px_0_rgba(65,89,214,0.1)]"
+      className="hover:shadow-1 flex cursor-pointer flex-col gap-6 rounded-[18px] bg-white p-5 shadow-sm transition-all"
     >
       <div className="flex justify-between">
         <Thumbnail

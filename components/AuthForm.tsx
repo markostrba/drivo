@@ -91,7 +91,7 @@ const AuthForm = ({ formType }: Props) => {
                 return (
                   <FormItem className="gap-1.5">
                     <div
-                      className={`flex h-[78px] w-full flex-col gap-1.5 rounded-xl p-4 shadow-[0_10px_30px_0_rgba(66,71,97,0.1)] ${error.fullName ? "border-brand border" : ""}`}
+                      className={`!shadow-1 flex h-[78px] w-full flex-col gap-1.5 rounded-xl p-4 ${error.fullName ? "border-brand border" : ""}`}
                     >
                       <FormLabel className="body-2! text-light-1! h-5">
                         Full Name
@@ -116,7 +116,7 @@ const AuthForm = ({ formType }: Props) => {
             render={({ field }) => (
               <FormItem className="gap-1.5">
                 <div
-                  className={`flex h-[78px] w-full flex-col gap-1.5 rounded-xl p-4 shadow-[0_10px_30px_0_rgba(66,71,97,0.1)] ${form.formState.errors.email ? "border-brand border" : ""}`}
+                  className={`!shadow-1 flex h-[78px] w-full flex-col gap-1.5 rounded-xl p-4 ${form.formState.errors.email ? "border-brand border" : ""}`}
                 >
                   <FormLabel className="body-2! text-light-1! h-5">
                     Email
@@ -136,7 +136,7 @@ const AuthForm = ({ formType }: Props) => {
 
           <Button
             type="submit"
-            className="button-primary! h-16.5 w-full p-4.5 shadow-[0_10px_30px_0_#4159d64d]"
+            className="button-primary! !shadow-2 h-16.5 w-full p-4.5"
           >
             {isSignIn ? "Login" : "Create Account"}
           </Button>

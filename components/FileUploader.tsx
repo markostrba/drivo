@@ -103,7 +103,7 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
     <div {...getRootProps()}>
       <input {...getInputProps()} />
       <Button
-        className="bg-brand hover:bg-brand-100 flex h-[52px] gap-2 rounded-[41px] px-10 shadow-[0_8px_30px_0_rgba(65,89,214,0.3)]"
+        className="bg-brand hover:bg-brand-100 !shadow-2 flex h-[52px] gap-2 rounded-[41px] px-10"
         onClick={open}
       >
         <Image
@@ -115,14 +115,14 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
         <span className="button">Upload</span>
       </Button>
       {files.length > 0 && (
-        <ul className="fixed right-10 bottom-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7 shadow-[0_8px_30px_0_rgba(65,89,214,0.1)]">
+        <ul className="!shadow-1 fixed right-10 bottom-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7">
           <h4 className="h4 text-light-100">Uploading</h4>
           {files.map(({ file, progress }, index) => {
             const { type, extension } = getFileType(file.name);
             return (
               <li
                 key={`${file.name}-${index}`}
-                className="flex items-center justify-between gap-3 rounded-xl p-3 shadow-[0_8px_30px_0_rgba(65,89,214,0.1)]"
+                className="!shadow-3 flex items-center justify-between gap-3 rounded-xl p-3"
               >
                 <div className="flex items-center gap-3">
                   <Thumbnail

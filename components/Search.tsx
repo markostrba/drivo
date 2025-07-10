@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const Search = () => {
   return (
-    <div className="flex h-[52px] max-w-[482px] flex-1 items-center gap-[7px] rounded-[30px] px-4 shadow-[0_0_30px_0_rgba(89,104,178,0.06),_0_30px_40px_0_rgba(89,104,178,0.06)]">
+    <div className="!shadow-3 flex h-[52px] max-w-[482px] flex-1 items-center gap-[7px] rounded-[30px] px-4">
       <Image
         src="/assets/icons/search.svg"
         alt="search"

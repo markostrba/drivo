@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   DialogContent,
   DialogFooter,
@@ -13,6 +13,10 @@ import Image from "next/image";
 import Thumbnail from "./Thumbnail";
 import FormattedDateTime from "./FormattedDateTime";
 import { convertFileSize, formatDateTime } from "@/lib/utils";
+import { getUsersByEmail } from "../lib/actions/user.action";
+import { Skeleton } from "./ui/skeleton";
+import { toast } from "sonner";
+import { removeUserFromFile } from "@/lib/actions/file.action";
 
 type File = Models.Document;
 type OnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -26,6 +30,8 @@ interface Props {
   isLoading: boolean;
   onAction: () => void;
   onEmailChange: OnNameChange;
+  email: string;
+  pathname: string;
 }
 
 const ImageThumbnail = ({ file }: { file: File }) => (
@@ -62,7 +68,7 @@ const FileRename = ({
   );
 };
 
-const FileDelete = (file: File) => {};
+// const FileDelete = (file: File) => {};
 
 const FileDetails = ({ file }: { file: File }) => {
   return (
@@ -81,29 +87,124 @@ const FileDetails = ({ file }: { file: File }) => {
 const FileShare = ({
   file,
   onEmailChange,
-  onRemove,
+  email,
+  pathname,
 }: {
   file: File;
   onEmailChange: OnNameChange;
-  onRemove: (email: string) => void;
+  email: string;
+  pathname: string;
 }) => {
+  const [sharedWithUsers, setSharedWithUsers] = useState<
+    {
+      fullName: string;
+      email: string;
+      avatar: string;
+    }[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    if (!file.users.length) return;
+    const fetchUsers = async () => {
+      setIsLoading(true);
+      const { error, data } = await getUsersByEmail(file.users);
+      if (error instanceof Error) {
+        toast.error("Failed to load shared users", {
+          description: error.message,
+        });
+      } else {
+        setSharedWithUsers(data!);
+      }
+      setIsLoading(false);
+    };
+    fetchUsers();
+  }, [file.users]);
+
+  const handleRemoveUser = async (email: string) => {
+    const { error } = await removeUserFromFile({
+      email,
+      fileId: file.$id,
+      pathname,
+    });
+    if (error)
+      toast.error("Failed to remove user", { description: error.message });
+    setSharedWithUsers((prev) => prev.filter((user) => user.email !== email));
+  };
   return (
     <div className="flex flex-col gap-7.5">
       <ImageThumbnail file={file} />
 
-      <div className="share-wrapper text-light-1">
-        <p className="subtitle-2 pl-1">Share file with other users:</p>
-        <Input
-          type="email"
-          placeholder="Enter email address"
-          onChange={(e) => onEmailChange(e)}
-          className="!shadow-3"
-        />
-        <div className="pt-4">
-          <div className="flex justify-between">
-            <p className="subtitle-2 text-light-1">Shared with</p>
-            <p className="subtitle-2 text-light-2">{file.users.length} users</p>
-          </div>
+      <div className="text-light-1 space-y-7.5">
+        <div className="flex flex-col gap-2.5">
+          <p className="subtitle-2 pl-1">Share file with other users:</p>
+          <Input
+            type="email"
+            placeholder="Enter email address"
+            onChange={(e) => onEmailChange(e)}
+            value={email}
+            className="!shadow-3 !border-text-light-2 focus-visible:border-text-light-2 !shad-no-focus body-2 !text-light-2 placeholder:text-light-2 h-[52px] rounded-[30px] !border !px-5 !py-4"
+          />
+        </div>
+        <div className="flex flex-col gap-5 px-3">
+          {isLoading ? (
+            <>
+              <div className="flex justify-between">
+                <Skeleton className="h-4 w-30" />
+                <Skeleton className="h-4 w-15" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-30" />
+                    <Skeleton className="h-4 w-40" />
+                  </div>
+                </div>
+                <Skeleton className="h-8 w-8 rounded-full" />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-between">
+                <p className="subtitle-2 text-light-1">Shared with</p>
+                <p className="subtitle-2 text-light-2">
+                  {sharedWithUsers.length} users
+                </p>
+              </div>
+
+              <ul className="flex flex-col gap-2">
+                {sharedWithUsers.map(({ email, fullName, avatar }) => (
+                  <li key={email} className="flex items-center justify-between">
+                    <div className="flex items-center justify-center gap-2">
+                      <Image
+                        src={avatar}
+                        alt="Remove"
+                        width={40}
+                        height={40}
+                        className="aspect-square rounded-full"
+                      />
+                      <div className="flex flex-col">
+                        <p className="body-2">{fullName}</p>
+                        <p className="body-2">{email}</p>
+                      </div>
+                    </div>
+                    <button
+                      className=""
+                      onClick={() => handleRemoveUser(email)}
+                    >
+                      <Image
+                        src="/assets/icons/remove.svg"
+                        alt="Remove"
+                        width={25}
+                        height={25}
+                        className="aspect-square rounded-full opacity-40 hover:opacity-80"
+                      />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -119,6 +220,8 @@ export const ActionDialogContent = ({
   isLoading,
   onAction,
   onEmailChange,
+  email,
+  pathname,
 }: Props) => {
   if (!action) return null;
 
@@ -138,7 +241,8 @@ export const ActionDialogContent = ({
           <FileShare
             file={file}
             onEmailChange={onEmailChange}
-            onRemove={() => {}}
+            email={email}
+            pathname={pathname}
           />
         )}
         {value === "delete" && (

@@ -32,3 +32,9 @@ interface RenameFileParams {
   extension: string;
   pathname: string;
 }
+
+interface ShareFileParams {
+  fileId: string;
+  email: string;
+  pathname: string;
+}

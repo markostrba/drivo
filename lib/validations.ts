@@ -39,3 +39,9 @@ export const RenameFileSchema = z.object({
   extension: z.string(),
   pathname: z.string(),
 });
+
+export const ShareFileSchema = z.object({
+  fileId: z.string(),
+  email: z.string().email(),
+  pathname: z.string(),
+});

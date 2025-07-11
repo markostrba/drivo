@@ -16,7 +16,39 @@ import handleError from "../handlers/error";
 import { ActionResponse, ErrorResponse, User } from "@/types/global";
 import { UnauthorizedError } from "../http-errors";
 
-const getUserByEmail = async ({ email }: GetUserByEmailParams) => {
+export const getUsersByEmail = async (
+  email: string[],
+): Promise<
+  ActionResponse<{ fullName: string; email: string; avatar: string }[]>
+> => {
+  try {
+    const { databases } = await createAdminClient();
+
+    const { documents } = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId,
+      [Query.equal("email", email)],
+    );
+    const mappedUsers = documents
+      ? documents.map<{
+          fullName: string;
+          email: string;
+          avatar: string;
+        }>(({ fullName, email, avatar }) => ({
+          fullName,
+          email,
+          avatar,
+        }))
+      : [];
+
+    return { success: true, data: mappedUsers };
+  } catch (err) {
+    console.log(err);
+    return handleError(err) as ErrorResponse;
+  }
+};
+
+export const getUserByEmail = async ({ email }: GetUserByEmailParams) => {
   const { databases } = await createAdminClient();
 
   console.log(email);

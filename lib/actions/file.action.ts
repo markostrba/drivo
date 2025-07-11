@@ -4,9 +4,15 @@ import { createSessionClient } from "../appwrite";
 import handleError from "../handlers/error";
 import { appwriteConfig } from "../appwrite/config";
 import { ActionResponse, ErrorResponse } from "@/types/global";
-import { GetFilesSchema, RenameFileSchema } from "../validations";
+import {
+  GetFilesSchema,
+  RenameFileSchema,
+  ShareFileSchema,
+} from "../validations";
 import { validate } from "../utils";
 import { revalidatePath } from "next/cache";
+import { getUserByEmail } from "./user.action";
+import { NotFoundError } from "../http-errors";
 
 export const createQueries = async (
   currentUserId: string,
@@ -57,7 +63,7 @@ export const getFiles = async (
 
 export const renameFile = async (
   params: RenameFileParams,
-): Promise<ActionResponse<Models.Document>> => {
+): Promise<ActionResponse<string>> => {
   try {
     const validationResult = await validate({
       params,
@@ -74,7 +80,7 @@ export const renameFile = async (
 
     const newName = `${name}.${extension}`;
 
-    const updateFile = await databases.updateDocument(
+    await databases.updateDocument(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
       fileId,
@@ -82,8 +88,97 @@ export const renameFile = async (
     );
 
     revalidatePath(pathname);
-    return { success: true, data: updateFile };
+    return { success: true, data: newName };
   } catch (err) {
     return handleError(err) as ErrorResponse;
+  }
+};
+
+export const shareFile = async (
+  params: ShareFileParams,
+): Promise<ActionResponse> => {
+  try {
+    console.log({ params });
+    const validationResult = await validate({
+      params,
+      schema: ShareFileSchema,
+    });
+
+    if (validationResult instanceof Error) {
+      return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { fileId, email, pathname } = validationResult.params;
+
+    const userExists = await getUserByEmail({ email });
+
+    if (userExists === null) {
+      throw new NotFoundError("User");
+    }
+
+    const { databases } = await createSessionClient();
+
+    const existingFile = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+    );
+
+    const currentUsers = existingFile.users ?? [];
+    const updatedUsers = Array.from(new Set([...currentUsers, email]));
+
+    await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      { users: updatedUsers },
+    );
+
+    revalidatePath(pathname);
+    return { success: true };
+  } catch (err) {
+    console.log(err);
+    return handleError(err) as ErrorResponse;
+  }
+};
+
+export const removeUserFromFile = async (
+  params: ShareFileParams,
+): Promise<ActionResponse> => {
+  try {
+    const validationResult = await validate({
+      params,
+      schema: ShareFileSchema,
+    });
+
+    if (validationResult instanceof Error) {
+      return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { fileId, email, pathname } = validationResult.params;
+    const { databases } = await createSessionClient();
+
+    const existingFile = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+    );
+
+    const currentUsers = existingFile.users ?? [];
+    const updatedUsers = currentUsers.filter(
+      (userEmail: string) => userEmail !== email,
+    );
+
+    await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      { users: updatedUsers },
+    );
+
+    revalidatePath(pathname);
+    return { success: true };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
   }
 };

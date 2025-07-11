@@ -17,7 +17,7 @@ import { ActionType } from "@/types/global";
 
 import { ActionDialogContent } from "./ActionDialogContent";
 import { usePathname } from "next/navigation";
-import { renameFile } from "@/lib/actions/file.action";
+import { renameFile, shareFile } from "@/lib/actions/file.action";
 import { toast } from "sonner";
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
@@ -26,7 +26,9 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
   const [actionDialog, setActionDialog] = useState<ActionType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState<string>(file.name);
-  const [emails, setEmails] = useState<string[]>([]);
+  const [email, setEmail] = useState("");
+
+  // const [emails, setEmails] = useState<string[]>([]);
   const pathname = usePathname();
 
   const handleCloseAllModals = () => {
@@ -34,41 +36,46 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
     setIsDropdownOpen(false);
     setActionDialog(null);
     setName(file.name);
-    setEmails([]);
+    setEmail("");
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setName(e.target.value);
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmails = e.target.value.trim().split(",");
-    setEmails((prev) => [...prev, ...newEmails]);
-  };
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setEmail(e.target.value);
 
   const handleAction = async () => {
     if (!actionDialog) return;
     setIsLoading(true);
 
     const actions = {
-      rename: () =>
-        renameFile({
+      rename: async () => {
+        const { error, data } = await renameFile({
           fileId: file.$id,
           name,
           extension: file.extension,
           pathname,
-        }),
+        });
+        if (error) toast.error(error.message);
+        else setName(data!);
+      },
+      share: async () => {
+        const { error } = await shareFile({
+          fileId: file.$id,
+          email,
+          pathname,
+        });
+        if (error)
+          toast.error("Failed to share to user", {
+            description: error.message,
+          });
+      },
     };
 
-    const { error, data } =
-      await actions[actionDialog.value as keyof typeof actions]();
+    await actions[actionDialog.value as keyof typeof actions]();
 
-    if (error) {
-      toast.error(error.message);
-    } else {
-      handleCloseAllModals();
-      setName(data!.name);
-    }
-
+    handleCloseAllModals();
     setIsLoading(false);
   };
 
@@ -138,6 +145,8 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
         onAction={handleAction}
         isLoading={isLoading}
         onEmailChange={handleEmailChange}
+        email={email}
+        pathname={pathname}
       />
     </Dialog>
   );

@@ -17,7 +17,11 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 
       <div className="flex h-full flex-1 flex-col lg:w-[77%]">
         <MobileNavigation {...user} />
-        <Header accountId={user.accountId} ownerId={user.$id} />
+        <Header
+          accountId={user.accountId}
+          ownerId={user.$id}
+          userEmail={user.email}
+        />
         <div className="flex-1 bg-[#F2F4F8] sm:rounded-[30px]">{children}</div>
       </div>
     </div>

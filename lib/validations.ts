@@ -31,6 +31,7 @@ export const GetFilesSchema = z.object({
   currentUserId: z.string(),
   currentUserEmail: z.string().email({ message: "Invalid email" }),
   type: z.array(z.enum(["document", "image", "video", "audio", "other"])),
+  searchText: z.string().optional(),
 });
 
 export const RenameFileSchema = z.object({

@@ -6,8 +6,15 @@ import { redirect } from "next/navigation";
 import { Models } from "node-appwrite";
 import React from "react";
 
-const Page = async ({ params }: { params: Promise<{ type: string }> }) => {
+const Page = async ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ type: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
   const type = (await params).type || "";
+  const search = ((await searchParams)?.query as string) || "";
   const { data: user } = await getCurrentUser();
 
   if (!user) redirect("/sign-in");
@@ -16,6 +23,7 @@ const Page = async ({ params }: { params: Promise<{ type: string }> }) => {
     currentUserId: user?.$id,
     currentUserEmail: user?.email,
     type: getFileTypesParams(type),
+    searchText: search,
   });
 
   const getTotalSize = (documents?: Models.DocumentList<Models.Document>) => {

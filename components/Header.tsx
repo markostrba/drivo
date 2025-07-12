@@ -5,12 +5,13 @@ import FileUploader from "./FileUploader";
 interface Props {
   accountId: string;
   ownerId: string;
+  userEmail: string;
 }
 
-const Header = ({ accountId, ownerId }: Props) => {
+const Header = ({ accountId, ownerId, userEmail }: Props) => {
   return (
     <header className="hidden items-center justify-between gap-5 p-5 sm:flex">
-      <Search />
+      <Search ownerId={ownerId} userEmail={userEmail} />
       <FileUploader accountId={accountId} ownerId={ownerId} />
     </header>
   );

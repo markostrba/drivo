@@ -19,7 +19,9 @@ export const createQueries = async (
   currentUserId: string,
   currentUserEmail: string,
   type: string[],
+  searchText: string,
 ) => {
+  console.log(searchText);
   const queries = [
     Query.or([
       Query.equal("owner", currentUserId),
@@ -27,8 +29,9 @@ export const createQueries = async (
     ]),
   ];
 
-  queries.push(Query.equal("type", type));
-
+  if (type.length) queries.push(Query.equal("type", type));
+  if (searchText) queries.push(Query.contains("name", searchText));
+  console.log(queries);
   return queries;
 };
 
@@ -42,11 +45,21 @@ export const getFiles = async (
       return handleError(validationResult) as ErrorResponse;
     }
 
-    const { currentUserId, currentUserEmail, type } = validationResult.params;
+    const {
+      currentUserId,
+      currentUserEmail,
+      type,
+      searchText = "",
+    } = validationResult.params;
 
     const { databases } = await createSessionClient();
 
-    const queries = await createQueries(currentUserId, currentUserEmail, type);
+    const queries = await createQueries(
+      currentUserId,
+      currentUserEmail,
+      type,
+      searchText,
+    );
 
     const files = await databases.listDocuments(
       appwriteConfig.databaseId,

@@ -5,6 +5,7 @@ import handleError from "../handlers/error";
 import { appwriteConfig } from "../appwrite/config";
 import { ActionResponse, ErrorResponse } from "@/types/global";
 import {
+  DeleteFileSchema,
   GetFilesSchema,
   RenameFileSchema,
   ShareFileSchema,
@@ -12,7 +13,7 @@ import {
 import { validate } from "../utils";
 import { revalidatePath } from "next/cache";
 import { getUserByEmail } from "./user.action";
-import { NotFoundError } from "../http-errors";
+import { ForbiddenError, NotFoundError } from "../http-errors";
 
 export const createQueries = async (
   currentUserId: string,
@@ -177,6 +178,54 @@ export const removeUserFromFile = async (
     );
 
     revalidatePath(pathname);
+    return { success: true };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+};
+
+export const deleteFile = async (
+  params: DeleteFileParams,
+): Promise<ActionResponse> => {
+  try {
+    const validationResult = await validate({
+      params,
+      schema: DeleteFileSchema,
+    });
+
+    if (validationResult instanceof Error) {
+      return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { fileId, userId, bucketFileId, pathname } = validationResult.params;
+
+    console.log({ fileId, userId, bucketFileId, pathname });
+    const { databases, storage } = await createSessionClient();
+
+    const file = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+    );
+
+    const fileOwner = file.owner;
+
+    if (fileOwner.$id !== userId) {
+      throw new ForbiddenError(
+        "Access denied. You are not the owner of this resource.",
+      );
+    }
+
+    await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+    );
+
+    await storage.deleteFile(appwriteConfig.bucketId, bucketFileId);
+
+    revalidatePath(pathname);
+
     return { success: true };
   } catch (error) {
     return handleError(error) as ErrorResponse;

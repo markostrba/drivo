@@ -46,7 +46,7 @@ const Page = async ({ params }: { params: Promise<{ type: string }> }) => {
           {result.data?.total ? (
             <section className="grid w-full gap-6.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {result.data.documents.map((file) => (
-                <Card key={file.$id} file={file} />
+                <Card key={file.$id} file={file} userId={user.$id} />
               ))}
             </section>
           ) : (

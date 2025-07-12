@@ -38,3 +38,10 @@ interface ShareFileParams {
   email: string;
   pathname: string;
 }
+
+interface DeleteFileParams {
+  fileId: string;
+  userId: string;
+  bucketFileId: string;
+  pathname: string;
+}

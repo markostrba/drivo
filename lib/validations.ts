@@ -45,3 +45,10 @@ export const ShareFileSchema = z.object({
   email: z.string().email(),
   pathname: z.string(),
 });
+
+export const DeleteFileSchema = z.object({
+  fileId: z.string(),
+  userId: z.string(),
+  bucketFileId: z.string(),
+  pathname: z.string(),
+});

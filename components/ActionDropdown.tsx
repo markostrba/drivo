@@ -17,10 +17,16 @@ import { ActionType } from "@/types/global";
 
 import { ActionDialogContent } from "./ActionDialogContent";
 import { usePathname } from "next/navigation";
-import { renameFile, shareFile } from "@/lib/actions/file.action";
+import { deleteFile, renameFile, shareFile } from "@/lib/actions/file.action";
 import { toast } from "sonner";
 
-const ActionDropdown = ({ file }: { file: Models.Document }) => {
+const ActionDropdown = ({
+  file,
+  userId,
+}: {
+  file: Models.Document;
+  userId: string;
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [actionDialog, setActionDialog] = useState<ActionType | null>(null);
@@ -28,7 +34,6 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
   const [name, setName] = useState<string>(file.name);
   const [email, setEmail] = useState("");
 
-  // const [emails, setEmails] = useState<string[]>([]);
   const pathname = usePathname();
 
   const handleCloseAllModals = () => {
@@ -67,9 +72,20 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
           pathname,
         });
         if (error)
-          toast.error("Failed to share to user", {
+          toast.error("Failed to share with user", {
             description: error.message,
           });
+      },
+      delete: async () => {
+        const { error } = await deleteFile({
+          fileId: file.$id,
+          userId,
+          bucketFileId: file.bucketFieldId,
+          pathname,
+        });
+
+        if (error)
+          toast.error("Failed to delete file", { description: error.message });
       },
     };
 

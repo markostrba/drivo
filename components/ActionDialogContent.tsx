@@ -68,7 +68,14 @@ const FileRename = ({
   );
 };
 
-// const FileDelete = (file: File) => {};
+const FileDelete = ({ file }: { file: File }) => {
+  return (
+    <p className="body-2 text-light-1 text-center px-2 mb-5.5">
+      Are you sure you want to move
+      <span className="subtitle-2 ml-1">{file.name} </span>file to Trash?
+    </p>
+  );
+};
 
 const FileDetails = ({ file }: { file: File }) => {
   return (
@@ -245,12 +252,7 @@ export const ActionDialogContent = ({
             pathname={pathname}
           />
         )}
-        {value === "delete" && (
-          <p className="text-light-1 text-center">
-            Are you sure you want to delete{` `}
-            <span className="text-brand-100 font-medium">{file.name}</span>?
-          </p>
-        )}
+        {value === "delete" && <FileDelete file={file} />}
       </DialogHeader>
       {["rename", "delete", "share"].includes(value) && (
         <DialogFooter className="flex flex-col gap-3 md:flex-row">

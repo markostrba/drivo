@@ -1,4 +1,5 @@
 import Card from "@/components/Card";
+import Sort from "@/components/Sort";
 import { getFiles } from "@/lib/actions/file.action";
 import { getCurrentUser } from "@/lib/actions/user.action";
 import { convertFileSize, getFileTypesParams } from "@/lib/utils";
@@ -14,6 +15,7 @@ const Page = async ({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const type = (await params).type || "";
+  const sort = ((await searchParams)?.sort as string) || "";
   const search = ((await searchParams)?.query as string) || "";
   const { data: user } = await getCurrentUser();
 
@@ -24,6 +26,7 @@ const Page = async ({
     currentUserEmail: user?.email,
     type: getFileTypesParams(type),
     searchText: search,
+    sort,
   });
 
   const getTotalSize = (documents?: Models.DocumentList<Models.Document>) => {
@@ -45,8 +48,11 @@ const Page = async ({
               <div className="body-1">
                 Total: <span className="h5">{getTotalSize(result.data)}</span>
               </div>
-              <div className="text-light-2 flex gap-2.5 text-[14px] font-medium">
-                Sort by: <div>sort</div>
+              <div className="flex items-center gap-2.5">
+                <span className="text-light-2 text-[14px] font-medium">
+                  Sort by:
+                </span>
+                <Sort />
               </div>
             </div>
           </section>

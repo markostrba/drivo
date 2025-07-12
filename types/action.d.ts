@@ -25,6 +25,7 @@ interface GetFilesParams {
   currentUserEmail: string;
   type: string[];
   searchText?: string;
+  sort?: string;
 }
 
 interface RenameFileParams {

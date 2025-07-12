@@ -20,6 +20,7 @@ export const createQueries = async (
   currentUserEmail: string,
   type: string[],
   searchText: string,
+  sort: string,
 ) => {
   console.log(searchText);
   const queries = [
@@ -31,7 +32,13 @@ export const createQueries = async (
 
   if (type.length) queries.push(Query.equal("type", type));
   if (searchText) queries.push(Query.contains("name", searchText));
-  console.log(queries);
+  if (sort) {
+    const [sortBy, orderBy] = sort.split("-");
+
+    queries.push(
+      orderBy === "asc" ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy),
+    );
+  }
   return queries;
 };
 
@@ -50,6 +57,7 @@ export const getFiles = async (
       currentUserEmail,
       type,
       searchText = "",
+      sort = "$createdAt-desc",
     } = validationResult.params;
 
     const { databases } = await createSessionClient();
@@ -59,6 +67,7 @@ export const getFiles = async (
       currentUserEmail,
       type,
       searchText,
+      sort,
     );
 
     const files = await databases.listDocuments(

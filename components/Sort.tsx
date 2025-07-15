@@ -19,7 +19,10 @@ const Sort = () => {
   };
   return (
     <Select onValueChange={handleSort} defaultValue={sortTypes[0].value}>
-      <SelectTrigger className="shad-no-focus h-11 w-full rounded-[8px] border-transparent bg-white !shadow-sm sm:w-[210px]">
+      <SelectTrigger
+        className="shad-no-focus h-11 w-full rounded-[8px] border-transparent bg-white !shadow-sm sm:w-[210px]"
+        aria-label="sort button"
+      >
         <SelectValue placeholder={sortTypes[0].value} />
       </SelectTrigger>
       <SelectContent className="!shadow-drop-3">

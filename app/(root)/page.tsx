@@ -68,38 +68,40 @@ const DashboardPage = async ({
         {/* Uploaded file type summaries */}
         <ul className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:mt-10 xl:gap-9">
           {usageSummary.map((summary) => (
-            <Link
-              href={summary.url}
+            <li
               key={summary.title}
               className="relative mt-6 rounded-[20px] bg-white p-5 transition-all hover:scale-105"
             >
-              <div className="space-y-4">
-                <div className="flex justify-between gap-3">
-                  <Image
-                    src={summary.icon}
-                    width={100}
-                    height={100}
-                    alt="uploaded image"
-                    className="absolute -top-[25px] -left-[12px] z-10 w-[190px] object-contain md:-top-[18px] md:-left-[10px] lg:-top-[20px] lg:-left-[11px] xl:-top-[25px] xl:-left-[12px]"
-                  />
-                  <h4 className="h4 text-light-1 relative z-20 w-full text-right">
-                    {convertFileSize(summary.size)}
-                  </h4>
-                </div>
+              <Link href={summary.url}>
+                <div className="space-y-4">
+                  <div className="flex justify-between gap-3">
+                    <Image
+                      src={summary.icon}
+                      width={100}
+                      height={100}
+                      alt="uploaded image"
+                      loading="eager"
+                      className="absolute -top-[25px] -left-[12px] z-10 w-[190px] object-contain md:-top-[18px] md:-left-[10px] lg:-top-[20px] lg:-left-[11px] xl:-top-[25px] xl:-left-[12px]"
+                    />
+                    <h2 className="h4 text-light-1 relative z-20 w-full text-right">
+                      {convertFileSize(summary.size)}
+                    </h2>
+                  </div>
 
-                <h5 className="h5 text-light-1 relative z-20 text-center">
-                  {summary.title}
-                </h5>
-                <Separator className="bg-[#A3B2C7]" />
-                <div className="flex flex-col gap-1 text-center">
-                  <p className="body-1 text-light-2 leading-5">Last update</p>
-                  <FormattedDateTime
-                    date={summary.latestDate}
-                    className="text-center"
-                  />
+                  <h1 className="h5 text-light-1 relative z-20 text-center">
+                    {summary.title}
+                  </h1>
+                  <Separator className="bg-[#A3B2C7]" />
+                  <div className="flex flex-col gap-1 text-center">
+                    <p className="body-1 text-light-2 leading-5">Last update</p>
+                    <FormattedDateTime
+                      date={summary.latestDate}
+                      className="text-center"
+                    />
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </li>
           ))}
         </ul>
       </section>
@@ -110,31 +112,32 @@ const DashboardPage = async ({
         {filesData.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">
             {files?.documents.map((file: Models.Document) => (
-              <Link
-                href={file.url}
-                target="_blank"
-                className="flex items-center gap-3"
-                key={file.$id}
-              >
-                <Thumbnail
-                  type={file.type}
-                  extension={file.extension}
-                  url={file.url}
-                />
+              <li key={file.$id}>
+                <Link
+                  href={file.url}
+                  target="_blank"
+                  className="flex items-center gap-3"
+                >
+                  <Thumbnail
+                    type={file.type}
+                    extension={file.extension}
+                    url={file.url}
+                  />
 
-                <div className="flex w-full flex-row xl:justify-between">
-                  <div className="flex flex-1 flex-col gap-1">
-                    <p className="subtitle-2 text-light-1 line-clamp-1">
-                      {file.name}
-                    </p>
-                    <FormattedDateTime
-                      date={file.$createdAt}
-                      className="caption"
-                    />
+                  <div className="flex w-full flex-row xl:justify-between">
+                    <div className="flex flex-1 flex-col gap-1">
+                      <p className="subtitle-2 text-light-1 line-clamp-1">
+                        {file.name}
+                      </p>
+                      <FormattedDateTime
+                        date={file.$createdAt}
+                        className="caption"
+                      />
+                    </div>
+                    <ActionDropdown file={file} userId={user.$id} />
                   </div>
-                  <ActionDropdown file={file} userId={user.$id} />
-                </div>
-              </Link>
+                </Link>
+              </li>
             ))}
           </ul>
         ) : (

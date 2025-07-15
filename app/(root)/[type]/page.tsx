@@ -58,16 +58,11 @@ const Page = async ({
             <h1 className="h1 mb-2.5">
               {type.charAt(0).toUpperCase() + type.slice(1)}
             </h1>
-            <div className="flex justify-between">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div className="body-1">
                 Total: <span className="h5">{getTotalSize(result.data)}</span>
               </div>
-              <div className="flex items-center gap-2.5">
-                <span className="text-light-2 text-[14px] font-medium">
-                  Sort by:
-                </span>
-                <Sort />
-              </div>
+              <Sort />
             </div>
           </section>
 

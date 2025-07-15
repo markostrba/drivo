@@ -20,7 +20,7 @@ const MobileNavigation = ({
   $id: ownerId,
 }: Pick<User, "email" | "fullName" | "avatar" | "accountId" | "$id">) => {
   return (
-    <header className="flex h-[60px] items-center justify-between px-5 sm:hidden">
+    <header className="flex h-[60px] items-center justify-between px-5 py-3 sm:hidden">
       <Image
         src="/assets/icons/logo-full-brand.svg"
         alt="logo"

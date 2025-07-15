@@ -11,9 +11,9 @@ import React from "react";
 export async function generateMetadata({
   params,
 }: {
-  params: { type: string };
+  params: Promise<{ type: string }>;
 }): Promise<Metadata> {
-  const type = params.type || "Files";
+  const type = (await params).type || "Files";
   const capitalized = type.charAt(0).toUpperCase() + type.slice(1);
 
   return {

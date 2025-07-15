@@ -1,3 +1,5 @@
+import { DocAnalytics } from "./global";
+
 interface GetUserByEmailParams {
   email: string;
 }
@@ -46,4 +48,17 @@ interface DeleteFileParams {
   userId: string;
   bucketFileId: string;
   pathname: string;
+}
+
+interface GetFileAnalyticsParams {
+  userId: string;
+  email: string;
+}
+
+interface GetFileAnalyticsResponse {
+  totalUsedSpace: number;
+  documents: DocAnalytics;
+  images: DocAnalytics;
+  media: DocAnalytics;
+  others: DocAnalytics;
 }

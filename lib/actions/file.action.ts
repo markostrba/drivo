@@ -14,6 +14,14 @@ import { validate } from "../utils";
 import { revalidatePath } from "next/cache";
 import { getUserByEmail } from "./user.action";
 import { ForbiddenError, NotFoundError } from "../http-errors";
+import {
+  DeleteFileParams,
+  GetFileAnalyticsParams,
+  GetFileAnalyticsResponse,
+  GetFilesParams,
+  RenameFileParams,
+  ShareFileParams,
+} from "@/types/action";
 
 export const createQueries = async (
   currentUserId: string,
@@ -251,5 +259,87 @@ export const deleteFile = async (
     return { success: true };
   } catch (error) {
     return handleError(error) as ErrorResponse;
+  }
+};
+
+export const getFileAnalytics = async ({
+  userId,
+  email,
+}: GetFileAnalyticsParams): Promise<
+  ActionResponse<GetFileAnalyticsResponse>
+> => {
+  try {
+    const { databases } = await createSessionClient();
+
+    const fileDocs = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      [Query.equal("owner", [userId])],
+    );
+
+    const files = fileDocs.documents;
+
+    const documents = { usedSpace: 0, lastUpdate: "" };
+    const images = { usedSpace: 0, lastUpdate: "" };
+    const media = { usedSpace: 0, lastUpdate: "" };
+    const others = { usedSpace: 0, lastUpdate: "" };
+
+    files.forEach((file) => {
+      const size = parseInt(file.size, 10);
+      if (file.type === "document") {
+        documents.usedSpace += size;
+        if (
+          !documents.lastUpdate ||
+          new Date(file.$updatedAt) > new Date(documents.lastUpdate)
+        ) {
+          documents.lastUpdate = file.$updatedAt;
+        }
+      } else if (file.type === "image") {
+        images.usedSpace += size;
+        if (
+          !images.lastUpdate ||
+          new Date(file.$updatedAt) > new Date(images.lastUpdate)
+        ) {
+          images.lastUpdate = file.$updatedAt;
+        }
+      } else if (file.type === "video" || file.type === "audio") {
+        media.usedSpace += size;
+        if (
+          !media.lastUpdate ||
+          new Date(file.$updatedAt) > new Date(media.lastUpdate)
+        ) {
+          media.lastUpdate = file.$updatedAt;
+        }
+      } else {
+        others.usedSpace += size;
+        if (
+          !others.lastUpdate ||
+          new Date(file.$updatedAt) > new Date(others.lastUpdate)
+        ) {
+          others.lastUpdate = file.$updatedAt;
+        }
+      }
+    });
+
+    const totalUsedSpace =
+      documents.usedSpace +
+      images.usedSpace +
+      media.usedSpace +
+      others.usedSpace;
+
+    return {
+      success: true,
+
+      data: {
+        totalUsedSpace,
+        documents,
+        images,
+        media,
+        others,
+      },
+    };
+  } catch (err) {
+    console.log(err);
+    return handleError(err) as ErrorResponse;
   }
 };

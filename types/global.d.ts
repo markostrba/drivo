@@ -34,3 +34,8 @@ export interface ActionType {
   icon: string;
   value: string;
 }
+
+export interface DocAnalytics {
+  usedSpace: number;
+  lastUpdate: string;
+}

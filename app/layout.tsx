@@ -29,7 +29,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable} ${inter.variable} antialiased`}>
         {children}
-        <Toaster richColors />
+        <Toaster richColors expand={true} />
       </body>
     </html>
   );

@@ -1,3 +1,5 @@
+import { DocAnalytics } from "@/types/global";
+
 export const navItems = [
   {
     name: "Dashboard",
@@ -98,5 +100,46 @@ export const sortTypes = [
   {
     label: "Size (Lowest)",
     value: "size-asc",
+  },
+];
+
+export const getUsageSummary = ({
+  documents,
+  images,
+  media,
+  others,
+}: Partial<{
+  documents: DocAnalytics;
+  images: DocAnalytics;
+  media: DocAnalytics;
+  others: DocAnalytics;
+}> = {}) => [
+  {
+    title: "Documents",
+    size: documents?.usedSpace || 0,
+    latestDate: documents?.lastUpdate || "",
+    icon: "/assets/icons/file-document-light.svg",
+    url: "/documents",
+  },
+  {
+    title: "Images",
+    size: images?.usedSpace || 0,
+    latestDate: images?.lastUpdate || "",
+    icon: "/assets/icons/file-image-light.svg",
+    url: "/images",
+  },
+  {
+    title: "Media",
+    size: media?.usedSpace || 0,
+    latestDate: media?.lastUpdate || "",
+    icon: "/assets/icons/file-video-light.svg",
+    url: "/media",
+  },
+  {
+    title: "Others",
+    size: others?.usedSpace || 0,
+    latestDate: others?.lastUpdate || "",
+    icon: "/assets/icons/file-other-light.svg",
+    url: "/others",
   },
 ];

@@ -14,6 +14,10 @@ import { redirect } from "next/navigation";
 import { Models } from "node-appwrite";
 import React from "react";
 
+export const metadata = {
+  title: "Dashboard - Drivo",
+};
+
 const DashboardPage = async ({
   searchParams,
 }: {

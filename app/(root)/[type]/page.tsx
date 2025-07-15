@@ -5,7 +5,21 @@ import { getCurrentUser } from "@/lib/actions/user.action";
 import { convertFileSize, getFileTypesParams } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { Models } from "node-appwrite";
+import { Metadata } from "next";
 import React from "react";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { type: string };
+}): Promise<Metadata> {
+  const type = params.type || "Files";
+  const capitalized = type.charAt(0).toUpperCase() + type.slice(1);
+
+  return {
+    title: `${capitalized} - Drivo`,
+  };
+}
 
 const Page = async ({
   params,

@@ -36,18 +36,19 @@ const DashboardPage = async ({
       searchText: search,
       sort,
     }),
-    getFileAnalytics({ userId: user.$id, email: user.email }),
+    getFileAnalytics({ userId: user.$id }),
   ]);
 
   const storageLimit = 6553600;
   const usageSummary = getUsageSummary(analytics || {});
   const totalUsedSpace = analytics?.totalUsedSpace || 0;
+  const filesData = files?.documents || [];
 
   return (
-    <div className="p-5 grid grid-cols-1 gap-6 md:grid-cols-2 xl:gap-10 h-full">
+    <div className="grid h-full grid-cols-1 gap-6 p-5 md:grid-cols-2 xl:gap-10">
       <section className="">
-        <div className="flex items-center rounded-[20px] bg-brand p-2 gap-2 text-white flex-col md:flex-row shadow-[0_2px_35px_0_rgba(65,89,214,0.3)] hover:scale-102">
-          <div className="lg:w-40 lg:h-40 h-60 w-60 xl:w-60 xl:h-60 flex justify-center items-center">
+        <div className="bg-brand flex flex-col items-center gap-2 rounded-[20px] p-2 text-white shadow-[0_2px_35px_0_rgba(65,89,214,0.3)] hover:scale-102 md:flex-row">
+          <div className="flex h-60 w-60 items-center justify-center lg:h-40 lg:w-40 xl:h-60 xl:w-60">
             <div className="">
               <CircularProgress
                 value={Math.round((totalUsedSpace / storageLimit) * 100)}
@@ -55,7 +56,7 @@ const DashboardPage = async ({
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 text-white text-center lg:text-left">
+          <div className="flex flex-col gap-2 text-center text-white lg:text-left">
             <h1 className="h3 xl:text-[30px]">Available Storage</h1>
             <p className="subtitle-1 xl:text-[18px]">
               {convertFileSize(totalUsedSpace) || 0} /{" "}
@@ -65,7 +66,7 @@ const DashboardPage = async ({
         </div>
 
         {/* Uploaded file type summaries */}
-        <ul className="mt-6 grid grid-cols-1 gap-4 xl:mt-10 md:grid-cols-2 xl:gap-9">
+        <ul className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:mt-10 xl:gap-9">
           {usageSummary.map((summary) => (
             <Link
               href={summary.url}
@@ -79,7 +80,7 @@ const DashboardPage = async ({
                     width={100}
                     height={100}
                     alt="uploaded image"
-                    className="absolute -left-[12px] -top-[25px] md:-left-[10px] md:-top-[18px] lg:-left-[11px] lg:-top-[20px] xl:-left-[12px] xl:-top-[25px]   z-10 w-[190px] object-contain"
+                    className="absolute -top-[25px] -left-[12px] z-10 w-[190px] object-contain md:-top-[18px] md:-left-[10px] lg:-top-[20px] lg:-left-[11px] xl:-top-[25px] xl:-left-[12px]"
                   />
                   <h4 className="h4 text-light-1 relative z-20 w-full text-right">
                     {convertFileSize(summary.size)}
@@ -91,7 +92,7 @@ const DashboardPage = async ({
                 </h5>
                 <Separator className="bg-[#A3B2C7]" />
                 <div className="flex flex-col gap-1 text-center">
-                  <p className="body-1 leading-5 text-light-2">Last update</p>
+                  <p className="body-1 text-light-2 leading-5">Last update</p>
                   <FormattedDateTime
                     date={summary.latestDate}
                     className="text-center"
@@ -106,7 +107,7 @@ const DashboardPage = async ({
       {/* Recent files uploaded */}
       <section className="h-full rounded-[20px] bg-white p-5 xl:p-8">
         <h2 className="h3 xl:h2 text-light-1">Recent files uploaded</h2>
-        {files?.documents?.length! > 0 ? (
+        {filesData.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">
             {files?.documents.map((file: Models.Document) => (
               <Link
@@ -122,8 +123,8 @@ const DashboardPage = async ({
                 />
 
                 <div className="flex w-full flex-row xl:justify-between">
-                  <div className="flex flex-col gap-1 flex-1">
-                    <p className="subtitle-2 line-clamp-1  text-light-1">
+                  <div className="flex flex-1 flex-col gap-1">
+                    <p className="subtitle-2 text-light-1 line-clamp-1">
                       {file.name}
                     </p>
                     <FormattedDateTime

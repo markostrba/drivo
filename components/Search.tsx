@@ -51,12 +51,14 @@ const Search = ({
         });
       }
       setIsLoading(false);
-      setResults(data?.documents!);
+      if (data) {
+        setResults(data?.documents);
+      }
       setIsOpen(true);
     };
 
     fetchFiles();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, ownerId, pathname, router, searchParams, userEmail]);
 
   useEffect(() => {
     if (!searchQuery) {
@@ -74,8 +76,8 @@ const Search = ({
   };
 
   return (
-    <div className="!shadow-3 relative max-w-[482px] flex-1  gap-[7px] rounded-[30px] px-4">
-      <div className="flex items-center h-[52px]">
+    <div className="!shadow-3 relative max-w-[482px] flex-1 gap-[7px] rounded-[30px] px-4">
+      <div className="flex h-[52px] items-center">
         <Image
           src="/assets/icons/search.svg"
           alt="search"
@@ -90,18 +92,24 @@ const Search = ({
         />
       </div>
       {isOpen && (
-        <ul className="absolute left-0 top-16 z-50 flex w-full flex-col gap-3 rounded-[30px] bg-white p-4">
+        <ul className="absolute top-16 left-0 z-50 flex w-full flex-col gap-3 rounded-[30px] bg-white p-4">
           {isLoading ? (
-            <div className="w-full flex gap-2">
+            <div className="flex w-full gap-2">
               <Skeleton className="h-12 w-12 rounded-full" />
               <Skeleton className="h-12 flex-1 !rounded-3xl" />
             </div>
           ) : results.length ? (
             results.map((file) => (
-              <li
+              <button
                 className="flex items-center justify-between"
                 key={file.$id}
                 onClick={() => handleClickItem(file)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleClickItem(file);
+                  }
+                }}
               >
                 <div className="flex cursor-pointer items-center gap-4">
                   <Thumbnail
@@ -110,19 +118,19 @@ const Search = ({
                     url={file.url}
                     className="size-9 min-w-9"
                   />
-                  <p className="subtitle-2 line-clamp-1 text-light-1">
+                  <p className="subtitle-2 text-light-1 line-clamp-1">
                     {file.name}
                   </p>
                 </div>
 
                 <FormattedDateTime
                   date={file.$createdAt}
-                  className="caption line-clamp-1 text-light-2"
+                  className="caption text-light-2 line-clamp-1"
                 />
-              </li>
+              </button>
             ))
           ) : (
-            <p className="body-2 text-center text-light-1">No files found</p>
+            <p className="body-2 text-light-1 text-center">No files found</p>
           )}
         </ul>
       )}

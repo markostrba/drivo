@@ -264,7 +264,6 @@ export const deleteFile = async (
 
 export const getFileAnalytics = async ({
   userId,
-  email,
 }: GetFileAnalyticsParams): Promise<
   ActionResponse<GetFileAnalyticsResponse>
 > => {

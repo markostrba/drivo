@@ -70,7 +70,7 @@ const FileRename = ({
 
 const FileDelete = ({ file }: { file: File }) => {
   return (
-    <p className="body-2 text-light-1 text-center px-2 mb-5.5">
+    <p className="body-2 text-light-1 mb-5.5 px-2 text-center">
       Are you sure you want to move
       <span className="subtitle-2 ml-1">{file.name} </span>file to Trash?
     </p>

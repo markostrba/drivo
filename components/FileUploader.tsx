@@ -116,7 +116,7 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
       </Button>
       {files.length > 0 && (
         <ul className="!shadow-1 fixed right-10 bottom-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7">
-          <h4 className="h4 text-light-100">Uploading</h4>
+          <h3 className="h4 text-light-100">Uploading</h3>
           {files.map(({ file, progress }, index) => {
             const { type, extension } = getFileType(file.name);
             return (

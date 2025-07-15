@@ -52,7 +52,6 @@ interface DeleteFileParams {
 
 interface GetFileAnalyticsParams {
   userId: string;
-  email: string;
 }
 
 interface GetFileAnalyticsResponse {

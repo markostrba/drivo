@@ -15,6 +15,13 @@ import { validate } from "../utils";
 import handleError from "../handlers/error";
 import { ActionResponse, ErrorResponse, User } from "@/types/global";
 import { UnauthorizedError } from "../http-errors";
+import {
+  CreateAccountParams,
+  GetUserByEmailParams,
+  SendEmailOTPParams,
+  SignInParams,
+  VerifyEmailOTPParams,
+} from "@/types/action";
 
 export const getUsersByEmail = async (
   email: string[],

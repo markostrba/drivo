@@ -9,7 +9,7 @@ const Sidebar = ({
   avatar,
 }: Pick<User, "fullName" | "email" | "avatar">) => {
   return (
-    <aside className="remove-scrollbar hidden h-full flex-col overflow-auto sm:flex ">
+    <aside className="remove-scrollbar hidden h-full flex-col overflow-auto sm:flex">
       <div className="flex h-full min-w-[90px] flex-col justify-stretch px-4 lg:px-2 xl:px-4">
         <div className="mb-10 flex items-center py-5 lg:py-7">
           <Link href="/">
@@ -38,9 +38,9 @@ const Sidebar = ({
             height={60}
             className="aspect-square rounded-full object-cover"
           />
-          <div className="hidden flex-col lg:flex ">
+          <div className="hidden flex-col lg:flex">
             <span className="h5 text-light-1 gap-0.5">{fullName}</span>
-            <span className="text-light-2 text-xs leading-[24px] xl:text-[14px] lg:text-[10px]">
+            <span className="text-light-2 text-xs leading-[24px] lg:text-[10px] xl:text-[14px]">
               {email}
             </span>
           </div>

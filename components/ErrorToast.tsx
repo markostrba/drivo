@@ -16,7 +16,7 @@ const ErrorToast = ({
         description: error.message,
       });
     }
-  }, [error]);
+  }, [error, title]);
 
   return null;
 };

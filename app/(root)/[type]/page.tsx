@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { Models } from "node-appwrite";
 import { Metadata } from "next";
 import React from "react";
-
+import { notFound } from "next/navigation";
 export async function generateMetadata({
   params,
 }: {
@@ -28,12 +28,15 @@ const Page = async ({
   params: Promise<{ type: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  const type = (await params).type || "";
+  const { data: user } = await getCurrentUser();
+  if (!user) redirect("/sign-in");
+  const type = (await params).type;
+  if (!getFileTypesParams(type).length) {
+    notFound();
+  }
+
   const sort = ((await searchParams)?.sort as string) || "";
   const search = ((await searchParams)?.query as string) || "";
-  const { data: user } = await getCurrentUser();
-
-  if (!user) redirect("/sign-in");
 
   const result = await getFiles({
     currentUserId: user?.$id,

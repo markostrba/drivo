@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 /*
 robots.txt allowing all pages to be crawled and indexed.
-This is intentional for SEO purposes, since this is a portfolio project.
+This is intentional, since this is a portfolio project.
 
 old settings:
 

@@ -22,7 +22,9 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
           ownerId={user.$id}
           userEmail={user.email}
         />
-        <div className="flex-1 bg-[#F2F4F8] sm:rounded-[30px]">{children}</div>
+        <div className="flex-1 overflow-y-auto bg-[#F2F4F8] sm:rounded-[30px]">
+          {children}
+        </div>
       </div>
     </div>
   );

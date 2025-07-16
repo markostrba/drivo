@@ -6,7 +6,7 @@ import Image from "next/image";
 import { MAX_FILE_SIZE } from "@/constants";
 import { toast } from "sonner";
 // import { uploadFile } from "@/lib/actions/file.action";
-import { convertFileToUrl, getFileType } from "@/lib/utils";
+import { cn, convertFileToUrl, getFileType } from "@/lib/utils";
 import useUploadFile from "@/hooks/useUploadFile";
 import { UploadProgress } from "appwrite";
 import { Progress } from "@/components/ui/progress";
@@ -14,9 +14,10 @@ import Thumbnail from "./Thumbnail";
 interface Props {
   accountId: string;
   ownerId: string;
+  className?: string;
 }
 
-const FileUploader = ({ ownerId, accountId }: Props) => {
+const FileUploader = ({ ownerId, accountId, className }: Props) => {
   const [files, setFiles] = useState<{ file: File; progress: number }[]>([]);
   const { uploadFile, cancelUploadFile } = useUploadFile({
     accountId,
@@ -100,10 +101,13 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
   };
 
   return (
-    <div {...getRootProps()}>
+    <div {...getRootProps()} className="">
       <input {...getInputProps()} />
       <Button
-        className="bg-brand hover:bg-brand-100 !shadow-2 flex h-[52px] gap-2 rounded-[41px] px-10"
+        className={cn(
+          "bg-brand hover:bg-brand-100 !shadow-2 flex h-[52px] gap-2 rounded-[41px] px-10",
+          className,
+        )}
         onClick={open}
       >
         <Image

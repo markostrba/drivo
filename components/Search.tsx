@@ -1,15 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useDebounce } from "use-debounce";
-import { getFiles } from "@/lib/actions/file.action";
-import { toast } from "sonner";
-import { Models } from "appwrite";
+
 import Thumbnail from "./Thumbnail";
 import FormattedDateTime from "./FormattedDateTime";
 import { Skeleton } from "./ui/skeleton";
+import { useSearch } from "@/hooks/useSearch";
+import Link from "next/link";
 
 const Search = ({
   ownerId,
@@ -18,61 +15,17 @@ const Search = ({
   ownerId: string;
   userEmail: string;
 }) => {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Models.Document[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("query") || "";
-  const router = useRouter();
-  const pathname = usePathname();
-  const [debouncedQuery] = useDebounce(query, 300);
+  const { query, setQuery, results, isLoading, isOpen, setIsOpen, setResults } =
+    useSearch({
+      ownerId,
+      userEmail,
+    });
 
-  useEffect(() => {
-    const fetchFiles = async () => {
-      if (debouncedQuery.length === 0) {
-        console.log(debouncedQuery);
-        setResults([]);
-        setIsOpen(false);
-        return router.push(pathname.replace(searchParams.toString(), ""));
-      }
-      setIsLoading(true);
-
-      const { error, data } = await getFiles({
-        currentUserId: ownerId,
-        currentUserEmail: userEmail,
-        type: [],
-        searchText: debouncedQuery,
-      });
-
-      if (error) {
-        toast.error("Failed to load searched files", {
-          description: error.message,
-        });
-      }
-      setIsLoading(false);
-      if (data) {
-        setResults(data?.documents);
-      }
-      setIsOpen(true);
-    };
-
-    fetchFiles();
-  }, [debouncedQuery, ownerId, pathname, router, searchParams, userEmail]);
-
-  useEffect(() => {
-    if (!searchQuery) {
-      setQuery("");
-    }
-  }, [searchQuery]);
-
-  const handleClickItem = (file: Models.Document) => {
+  const handleClickItem = () => {
     setIsOpen(false);
     setResults([]);
 
-    router.push(
-      `/${file.type === "video" || file.type === "audio" ? "media" : file.type + "s"}?query=${query}`,
-    );
+    setQuery("");
   };
 
   return (
@@ -88,6 +41,7 @@ const Search = ({
           placeholder="Search..."
           onChange={(e) => setQuery(e.target.value)}
           value={query}
+          style={{ caretColor: "#fa7275" }}
           className="shad-no-focus! subtitle-2 text-light-1 border-none shadow-none!"
         />
       </div>
@@ -100,34 +54,30 @@ const Search = ({
             </div>
           ) : results.length ? (
             results.map((file) => (
-              <button
-                className="flex items-center justify-between"
-                key={file.$id}
-                onClick={() => handleClickItem(file)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleClickItem(file);
-                  }
-                }}
-              >
-                <div className="flex cursor-pointer items-center gap-4">
-                  <Thumbnail
-                    type={file.type}
-                    extension={file.extension}
-                    url={file.url}
-                    className="size-9 min-w-9"
-                  />
-                  <p className="subtitle-2 text-light-1 line-clamp-1">
-                    {file.name}
-                  </p>
-                </div>
+              <li key={file.$id}>
+                <Link
+                  href={`/${file.type === "video" || file.type === "audio" ? "media" : file.type + "s"}?query=${query}`}
+                  onClick={handleClickItem}
+                  className="flex items-center justify-between"
+                >
+                  <div className="flex cursor-pointer items-center gap-4">
+                    <Thumbnail
+                      type={file.type}
+                      extension={file.extension}
+                      url={file.url}
+                      className="size-9 min-w-9"
+                    />
+                    <p className="subtitle-2 text-light-1 line-clamp-1">
+                      {file.name}
+                    </p>
+                  </div>
 
-                <FormattedDateTime
-                  date={file.$createdAt}
-                  className="caption text-light-2 line-clamp-1"
-                />
-              </button>
+                  <FormattedDateTime
+                    date={file.$createdAt}
+                    className="caption text-light-2 line-clamp-1"
+                  />
+                </Link>
+              </li>
             ))
           ) : (
             <p className="body-2 text-light-1 text-center">No files found</p>

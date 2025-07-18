@@ -30,7 +30,6 @@ export const createQueries = async (
   searchText: string,
   sort: string,
 ) => {
-  console.log(searchText);
   const queries = [
     Query.or([
       Query.equal("owner", currentUserId),
@@ -83,7 +82,6 @@ export const getFiles = async (
       appwriteConfig.filesCollectionId,
       queries,
     );
-    console.log({ files });
     return { success: true, data: files };
   } catch (err) {
     return handleError(err) as ErrorResponse;
@@ -129,7 +127,6 @@ export const shareFile = async (
   params: ShareFileParams,
 ): Promise<ActionResponse> => {
   try {
-    console.log({ params });
     const validationResult = await validate({
       params,
       schema: ShareFileSchema,
@@ -229,7 +226,6 @@ export const deleteFile = async (
 
     const { fileId, userId, bucketFileId, pathname } = validationResult.params;
 
-    console.log({ fileId, userId, bucketFileId, pathname });
     const { databases, storage } = await createSessionClient();
 
     const file = await databases.getDocument(

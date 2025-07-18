@@ -58,14 +58,11 @@ export const getUsersByEmail = async (
 export const getUserByEmail = async ({ email }: GetUserByEmailParams) => {
   const { databases } = await createAdminClient();
 
-  console.log(email);
   const result = await databases.listDocuments(
     appwriteConfig.databaseId,
     appwriteConfig.usersCollectionId,
     [Query.equal("email", [email])],
   );
-
-  console.log("getUserByEmail", result.documents[0]);
 
   return result.total > 0 ? result.documents[0] : null;
 };
@@ -87,7 +84,6 @@ export const sendEmailOTP = async (
 
     const { account } = await createAdminClient();
     const session = await account.createEmailToken(ID.unique(), email);
-    console.log("sendOTP session", session);
 
     return { success: true, data: { accountId: session.userId } };
   } catch (error) {
@@ -110,11 +106,9 @@ export const verifyEmailOTP = async (
     }
 
     const { accountId, otpCode } = validationResult.params;
-    console.log("accountId", accountId);
     const { account } = await createAdminClient();
 
     const session = await account.createSession(accountId, otpCode);
-    console.log("session verify", session);
     (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
       httpOnly: true,
@@ -180,8 +174,6 @@ export const signIn = async (
     }
 
     const { email } = validationResult.params!;
-
-    console.log("signin", email);
 
     const existingUser = await getUserByEmail({ email });
 

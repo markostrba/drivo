@@ -45,7 +45,6 @@ const AuthForm = ({ formType }: Props) => {
       if (result.success && result.data) {
         setIsOtpOpen(true);
         setAccountId(result.data?.accountId);
-        console.log(result.data, "sgfofs");
       } else {
         console.log(result.error);
         toast.error(result.error?.message);
@@ -58,7 +57,6 @@ const AuthForm = ({ formType }: Props) => {
       if (result.success && result.data) {
         setIsOtpOpen(true);
         setAccountId(result.data?.accountId);
-        console.log(result.data, "sgfofs");
       } else {
         console.log(result.error);
         toast.error(result.error?.message);

@@ -46,7 +46,6 @@ const OTPModal = ({
       toast.error(error?.message);
       return;
     }
-    console.log(data.sessionId, typeof data.sessionId);
     if (data.sessionId) return router.push("/");
   };
 

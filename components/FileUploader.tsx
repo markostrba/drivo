@@ -25,7 +25,6 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
   });
 
   const onProgress = (progress: UploadProgress, fileName: string) => {
-    console.log("progress", progress, fileName);
     setFiles((prevFiles) =>
       prevFiles.map((prevFile) =>
         prevFile.file.name === fileName

@@ -49,7 +49,7 @@ const DashboardPage = async ({
   const filesData = files?.documents || [];
 
   return (
-    <div className="grid h-full grid-cols-1 gap-6 p-5 pt-6 md:grid-cols-2 xl:gap-10">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:gap-10">
       <section className="">
         <div className="bg-brand flex flex-col items-center gap-2 rounded-[20px] p-2 text-white shadow-[0_2px_35px_0_rgba(65,89,214,0.3)] hover:scale-102 md:flex-row">
           <div className="flex h-60 w-60 items-center justify-center lg:h-40 lg:w-40 xl:h-60 xl:w-60">

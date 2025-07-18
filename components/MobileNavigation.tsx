@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "./ui/button";
 import FileUploader from "./FileUploader";
 import NavLinks from "./NavLinks";
-import { User } from "@/types/global";
+import { User } from "@/types";
 import HamburgerIcon from "./ui/hamburgerIcon";
 import { ChevronLeft, X } from "lucide-react";
 import { useSearch } from "@/hooks/useSearch";

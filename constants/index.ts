@@ -1,4 +1,4 @@
-import { DocAnalytics } from "@/types/global";
+import { DocAnalytics } from "@/types";
 
 export const navItems = [
   {

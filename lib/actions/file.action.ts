@@ -3,7 +3,7 @@ import { Models, Query } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
 import handleError from "../handlers/error";
 import { appwriteConfig } from "../appwrite/config";
-import { ActionResponse, ErrorResponse } from "@/types/global";
+import { ActionResponse, ErrorResponse } from "@/types";
 import {
   DeleteFileSchema,
   GetFilesSchema,

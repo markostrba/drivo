@@ -13,7 +13,7 @@ import {
 } from "../validations";
 import { validate } from "../utils";
 import handleError from "../handlers/error";
-import { ActionResponse, ErrorResponse, User } from "@/types/global";
+import { ActionResponse, ErrorResponse, User } from "@/types";
 import { UnauthorizedError } from "../http-errors";
 import {
   CreateAccountParams,

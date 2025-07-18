@@ -1,28 +1,28 @@
-import { DocAnalytics } from "./global";
+import { DocAnalytics } from ".";
 
-interface GetUserByEmailParams {
+export interface GetUserByEmailParams {
   email: string;
 }
 
-interface SendEmailOTPParams {
+export interface SendEmailOTPParams {
   email: string;
 }
 
-interface VerifyEmailOTPParams {
+export interface VerifyEmailOTPParams {
   accountId: string;
   otpCode: string;
 }
 
-interface CreateAccountParams {
+export interface CreateAccountParams {
   fullName: string;
   email: string;
 }
 
-interface SignInParams {
+export interface SignInParams {
   email: string;
 }
 
-interface GetFilesParams {
+export interface GetFilesParams {
   currentUserId: string;
   currentUserEmail: string;
   type: string[];
@@ -30,31 +30,31 @@ interface GetFilesParams {
   sort?: string;
 }
 
-interface RenameFileParams {
+export interface RenameFileParams {
   fileId: string;
   name: string;
   extension: string;
   pathname: string;
 }
 
-interface ShareFileParams {
+export interface ShareFileParams {
   fileId: string;
   email: string;
   pathname: string;
 }
 
-interface DeleteFileParams {
+export interface DeleteFileParams {
   fileId: string;
   userId: string;
   bucketFileId: string;
   pathname: string;
 }
 
-interface GetFileAnalyticsParams {
+export interface GetFileAnalyticsParams {
   userId: string;
 }
 
-interface GetFileAnalyticsResponse {
+export interface GetFileAnalyticsResponse {
   totalUsedSpace: number;
   documents: DocAnalytics;
   images: DocAnalytics;

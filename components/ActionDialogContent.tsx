@@ -8,7 +8,7 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Models } from "appwrite";
-import { ActionType } from "@/types/global";
+import { ActionType } from "@/types";
 import Image from "next/image";
 import Thumbnail from "./Thumbnail";
 import FormattedDateTime from "./FormattedDateTime";

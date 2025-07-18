@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ZodError, ZodSchema } from "zod";
 import { ValidationError } from "./http-errors";
-import { FileType, ValidationParams } from "@/types/global";
+import { FileType, ValidationParams } from "@/types";
 import { appwriteConfig } from "./appwrite/config";
 
 export function cn(...inputs: ClassValue[]) {

@@ -13,7 +13,7 @@ import { Models } from "appwrite";
 import { actionsDropdownItems } from "@/constants";
 import Link from "next/link";
 import { generateDownloadUrl } from "@/lib/utils";
-import { ActionType } from "@/types/global";
+import { ActionType } from "@/types";
 
 import { ActionDialogContent } from "./ActionDialogContent";
 import { usePathname } from "next/navigation";

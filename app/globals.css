@@ -235,6 +235,21 @@ body {
     background: transparent;
   }
 }
-/* .shadow-3 {
-  box-shadow: 0px 30px 40px rgb(89 104 178 / 6%);
-} */
+
+.cardSummary {
+  background-color: white;
+  height: 100%;
+  width: 100%;
+  --r: 23px; /* the radius */
+  --s: 30px; /* the size of the cut */
+  border-radius: var(--r);
+
+  --_m:/calc(2*var(--r)) calc(2*var(--r)) radial-gradient(#000 70%,#0000 72%) no-repeat;
+  mask:
+    calc(var(--s) + var(--r)) 0 var(--_m),
+    0 calc(var(--s) + var(--r)) var(--_m),
+    radial-gradient(var(--s) at 0 0,#0000 99%,#000 calc(100% + 1px)) 
+     var(--r) var(--r) no-repeat,
+    conic-gradient(at calc(var(--s) + 2*var(--r)) calc(var(--s) + 2*var(--r)),
+     #000 75%,#0000 0);
+}

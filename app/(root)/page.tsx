@@ -84,20 +84,20 @@ const DashboardPage = async ({
           <ul className="mt-5 flex flex-col gap-5">
             {files?.documents.map((file: Models.Document) => (
               <li key={file.$id}>
-                <Link
-                  href={file.url}
-                  target="_blank"
-                  className="flex items-center gap-3"
-                >
-                  <Thumbnail
-                    type={file.type}
-                    extension={file.extension}
-                    url={file.url}
-                  />
+                <div className="flex justify-between">
+                  <Link
+                    href={file.url}
+                    target="_blank"
+                    className="flex items-center gap-3"
+                  >
+                    <Thumbnail
+                      type={file.type}
+                      extension={file.extension}
+                      url={file.url}
+                    />
 
-                  <div className="flex w-full flex-row xl:justify-between">
                     <div className="flex flex-1 flex-col gap-1">
-                      <p className="subtitle-2 text-light-1 max-w-[250px] truncate md:max-w-[200px] lg:max-w-[250px] 2xl:max-w-[400px]">
+                      <p className="subtitle-2 text-light-1 max-w-[150px] truncate md:max-w-[200px] lg:max-w-[250px] 2xl:max-w-[400px]">
                         {file.name}
                       </p>
                       <FormattedDateTime
@@ -105,9 +105,9 @@ const DashboardPage = async ({
                         className="caption"
                       />
                     </div>
-                    <ActionDropdown file={file} userId={user.$id} />
-                  </div>
-                </Link>
+                  </Link>
+                  <ActionDropdown file={file} userId={user.$id} />
+                </div>
               </li>
             ))}
           </ul>

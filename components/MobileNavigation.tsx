@@ -106,7 +106,7 @@ const MobileNavigation = ({
         <div className="!shadow-1 flex w-full items-center gap-2 rounded-full bg-[#F2F4F8] px-5 py-3">
           <Sheet>
             <SheetTrigger>
-              <HamburgerIcon />
+              <HamburgerIcon aria-label="Open menu" />
             </SheetTrigger>
             <SheetContent className="h-screen px-3 pt-8" side="left">
               <SheetTitle className="sr-only">menu</SheetTitle>

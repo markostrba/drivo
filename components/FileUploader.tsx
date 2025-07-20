@@ -32,12 +32,6 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
           : prevFile,
       ),
     );
-    // setFiles((prevFiles) =>
-    //   prevFiles.map(
-    //     ({ file, progress }) =>
-    //       file.name === fileName && { file, progress: progress.progress },
-    //   ),
-    // );
   };
 
   const onDrop = useCallback(

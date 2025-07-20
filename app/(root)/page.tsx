@@ -1,14 +1,13 @@
 import ActionDropdown from "@/components/ActionDropdown";
+import CardSummary from "@/components/CardSummary";
 import CircularProgress from "@/components/CircularProgress";
 import ErrorToast from "@/components/ErrorToast";
 import FormattedDateTime from "@/components/FormattedDateTime";
 import Thumbnail from "@/components/Thumbnail";
-import { Separator } from "@/components/ui/separator";
 import { getUsageSummary } from "@/constants";
 import { getFileAnalytics, getFiles } from "@/lib/actions/file.action";
 import { getCurrentUser } from "@/lib/actions/user.action";
 import { convertFileSize } from "@/lib/utils";
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Models } from "node-appwrite";
@@ -49,65 +48,33 @@ const DashboardPage = async ({
   const filesData = files?.documents || [];
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:gap-10">
-      <section className="">
-        <div className="bg-brand flex flex-col items-center gap-2 rounded-[20px] p-2 text-white shadow-[0_2px_35px_0_rgba(65,89,214,0.3)] hover:scale-102 md:flex-row">
-          <div className="flex h-60 w-60 items-center justify-center lg:h-40 lg:w-40 xl:h-60 xl:w-60">
-            <div className="">
+    <div className="grid h-full grid-cols-1 gap-6 md:grid-cols-2 xl:gap-10">
+      <section className="flex flex-col items-center gap-10 sm:gap-8">
+        <div className="bg-brand flex w-full flex-col rounded-[20px] shadow-[0_2px_35px_0_rgba(65,89,214,0.3)] hover:scale-102 sm:items-center xl:flex-row">
+          <div className="flex items-center justify-center">
+            <div className="relative aspect-square xl:max-h-[190px]">
               <CircularProgress
                 value={Math.round((totalUsedSpace / storageLimit) * 100)}
               />
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 text-center text-white lg:text-left">
-            <h1 className="h3 xl:text-[30px]">Available Storage</h1>
-            <p className="subtitle-1 xl:text-[18px]">
-              {convertFileSize(totalUsedSpace) || 0} /{" "}
+          <div className="flex flex-col gap-2 pb-4 text-center text-white sm:pl-4 sm:text-left">
+            <h1 className="h3">Available Storage</h1>
+            <p className="subtitle-1 text-center">
+              {convertFileSize(totalUsedSpace)} /{" "}
               {convertFileSize(storageLimit)}
             </p>
           </div>
         </div>
 
-        {/* Uploaded file type summaries */}
-        <ul className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:mt-10 xl:gap-9">
-          {usageSummary.map((summary) => (
-            <li
-              key={summary.title}
-              className="relative mt-6 rounded-[20px] bg-white p-5 transition-all hover:scale-105"
-            >
-              <Link href={summary.url}>
-                <div className="space-y-4">
-                  <div className="flex justify-between gap-3">
-                    <Image
-                      src={summary.icon}
-                      width={100}
-                      height={100}
-                      alt="uploaded image"
-                      loading="eager"
-                      className="absolute -top-[25px] -left-[12px] z-10 w-[190px] object-contain md:-top-[18px] md:-left-[10px] lg:-top-[20px] lg:-left-[11px] xl:-top-[25px] xl:-left-[12px]"
-                    />
-                    <h2 className="h4 text-light-1 relative z-20 w-full text-right">
-                      {convertFileSize(summary.size)}
-                    </h2>
-                  </div>
-
-                  <h1 className="h5 text-light-1 relative z-20 text-center">
-                    {summary.title}
-                  </h1>
-                  <Separator className="bg-[#A3B2C7]" />
-                  <div className="flex flex-col gap-1 text-center">
-                    <p className="body-1 text-light-2 leading-5">Last update</p>
-                    <FormattedDateTime
-                      date={summary.latestDate}
-                      className="text-center"
-                    />
-                  </div>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="flex h-full w-full items-center">
+          <ul className="grid h-[1000px] w-full max-w-[482px] grid-cols-1 gap-7.5 md:h-full md:max-h-[500px] md:grid-cols-2 md:gap-5">
+            {usageSummary.map((item) => (
+              <CardSummary key={item.title} {...item} />
+            ))}
+          </ul>
+        </div>
       </section>
 
       {/* Recent files uploaded */}
@@ -130,7 +97,7 @@ const DashboardPage = async ({
 
                   <div className="flex w-full flex-row xl:justify-between">
                     <div className="flex flex-1 flex-col gap-1">
-                      <p className="subtitle-2 text-light-1 line-clamp-1">
+                      <p className="subtitle-2 text-light-1 max-w-[250px] truncate md:max-w-[200px] lg:max-w-[250px] 2xl:max-w-[400px]">
                         {file.name}
                       </p>
                       <FormattedDateTime

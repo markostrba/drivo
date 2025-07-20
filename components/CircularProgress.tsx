@@ -189,10 +189,8 @@ const CircularProgress = ({ value = 0 }: { value?: number }) => {
 
   return (
     <ArcProgress progress={progress}>
-      <div className="h2 leading-5">{progress}%</div>
-      <div className="subtitle-1 md:subtitle-1 lg:subtitle-1 md:text-[12px]">
-        Space used
-      </div>
+      <div className="h2 h-[24px] leading-5">{progress}%</div>
+      <div className="subtitle-1">Space used</div>
     </ArcProgress>
   );
 };

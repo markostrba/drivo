@@ -1,7 +1,12 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Button } from "./ui/button";
 import FileUploader from "./FileUploader";
 import NavLinks from "./NavLinks";
@@ -39,7 +44,7 @@ const MobileNavigation = ({
   };
 
   return (
-    <header className="flex min-h-[110px] w-full items-center justify-between border-b bg-[#F2F4F8] px-5 py-3 sm:hidden">
+    <header className="flex min-h-[110px] w-full items-center justify-between border-b bg-[#F2F4F8] px-5 py-3 xl:hidden">
       {isSearchOpen ? (
         <div className="fixed bottom-0 left-0 z-50 h-screen w-full bg-white">
           <div className="flex items-center justify-center pr-3 pl-2">
@@ -104,6 +109,7 @@ const MobileNavigation = ({
               <HamburgerIcon />
             </SheetTrigger>
             <SheetContent className="h-screen px-3 pt-8" side="left">
+              <SheetTitle className="sr-only">menu</SheetTitle>
               <NavLinks isMobileNav className="justify-start" />
               <div className="flex flex-col justify-between gap-5 pb-5">
                 <FileUploader

@@ -10,7 +10,7 @@ interface Props {
 
 const Header = ({ accountId, ownerId, userEmail }: Props) => {
   return (
-    <header className="hidden items-center justify-between gap-5 p-5 sm:flex">
+    <header className="hidden items-center justify-between gap-5 p-5 xl:flex">
       <Search ownerId={ownerId} userEmail={userEmail} />
       <FileUploader accountId={accountId} ownerId={ownerId} />
     </header>

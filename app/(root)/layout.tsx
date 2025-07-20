@@ -10,19 +10,19 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 
   if (!user) redirect("/sign-in");
   return (
-    <div className="flex h-screen sm:pr-9 sm:pb-10">
-      <div className="lg:w-[23%]">
+    <div className="flex h-screen xl:pr-9 xl:pb-10">
+      <div className="xl:w-[23%]">
         <Sidebar />
       </div>
 
-      <div className="flex h-full flex-1 flex-col lg:w-[77%]">
+      <div className="flex h-full flex-1 flex-col xl:w-[77%]">
         <MobileNavigation {...user} />
         <Header
           accountId={user.accountId}
           ownerId={user.$id}
           userEmail={user.email}
         />
-        <div className="flex-1 overflow-y-auto bg-[#F2F4F8] sm:rounded-[30px]">
+        <div className="h-full flex-1 overflow-y-auto bg-[#F2F4F8] p-5 pt-6 xl:rounded-[30px]">
           {children}
         </div>
       </div>

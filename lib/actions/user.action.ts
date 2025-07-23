@@ -203,3 +203,14 @@ export const getCurrentUser = async (): Promise<ActionResponse<User>> => {
     return handleError(error) as ErrorResponse;
   }
 };
+export const signOutUser = async (): Promise<ActionResponse> => {
+  const { account } = await createSessionClient();
+
+  try {
+    await account.deleteSession("current");
+    (await cookies()).delete("appwrite-session");
+    return { success: true };
+  } catch (error) {
+    return handleError(error);
+  }
+};

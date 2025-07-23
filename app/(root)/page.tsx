@@ -48,7 +48,7 @@ const DashboardPage = async ({
   const filesData = files?.documents || [];
 
   return (
-    <div className="grid h-full grid-cols-1 gap-6 md:grid-cols-2 xl:gap-10">
+    <div className="mx-auto grid h-full max-w-7xl grid-cols-1 gap-6 md:grid-cols-2 xl:gap-10">
       <section className="flex flex-col items-center gap-10 sm:gap-8">
         <div className="bg-brand flex w-full flex-col rounded-[20px] shadow-[0_2px_35px_0_rgba(65,89,214,0.3)] hover:scale-102 sm:items-center xl:flex-row">
           <div className="flex items-center justify-center">
@@ -68,13 +68,11 @@ const DashboardPage = async ({
           </div>
         </div>
 
-        <div className="flex h-full w-full items-center">
-          <ul className="grid h-[1000px] w-full max-w-[482px] grid-cols-1 gap-7.5 md:h-full md:max-h-[500px] md:grid-cols-2 md:gap-5">
-            {usageSummary.map((item) => (
-              <CardSummary key={item.title} {...item} />
-            ))}
-          </ul>
-        </div>
+        <ul className="grid h-[1000px] w-full grid-cols-1 gap-7.5 md:h-full md:max-h-[500px] md:grid-cols-2 md:gap-5">
+          {usageSummary.map((item) => (
+            <CardSummary key={item.title} {...item} />
+          ))}
+        </ul>
       </section>
 
       {/* Recent files uploaded */}

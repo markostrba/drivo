@@ -18,6 +18,7 @@ import { Skeleton } from "./ui/skeleton";
 import Thumbnail from "./Thumbnail";
 import FormattedDateTime from "./FormattedDateTime";
 import Link from "next/link";
+import UserDropdown from "./UserDropdown";
 
 const MobileNavigation = ({
   email,
@@ -140,12 +141,13 @@ const MobileNavigation = ({
             Search...
           </button>
 
-          <Image
-            src={avatar}
-            width={30}
-            height={30}
-            className="rounded-full"
-            alt="avatar"
+          <UserDropdown
+            email={email}
+            avatar={avatar}
+            fullName={fullName}
+            accountId={accountId}
+            $id={ownerId}
+            avatarClassName="size-8"
           />
         </div>
       )}

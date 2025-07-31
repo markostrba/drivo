@@ -1,7 +1,13 @@
 import React from "react";
 import Image from "next/image";
+import { getCurrentUser } from "@/lib/actions/user.action";
+import { redirect } from "next/navigation";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
+  const { data: user } = await getCurrentUser();
+
+  if (user) redirect("/");
+
   return (
     <div className="flex min-h-screen">
       <div className="bg-brand hidden w-1/2 items-center justify-center p-10 lg:flex xl:w-2/5">

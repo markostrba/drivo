@@ -22,7 +22,6 @@ const DashboardPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  const sort = ((await searchParams)?.sort as string) || "";
   const search = ((await searchParams)?.query as string) || "";
   const { data: user } = await getCurrentUser();
 
@@ -37,12 +36,11 @@ const DashboardPage = async ({
       currentUserEmail: user?.email,
       type: [],
       searchText: search,
-      sort,
     }),
     getFileAnalytics({ userId: user.$id }),
   ]);
 
-  const storageLimit = 6553600;
+  const storageLimit = 65536000;
   const usageSummary = getUsageSummary(analytics || {});
   const totalUsedSpace = analytics?.totalUsedSpace || 0;
   const filesData = files?.documents || [];
@@ -76,7 +74,7 @@ const DashboardPage = async ({
       </section>
 
       {/* Recent files uploaded */}
-      <section className="h-full rounded-[20px] bg-white p-5 xl:p-8">
+      <section className="h-full rounded-[20px] bg-white p-5 md:overflow-y-auto xl:p-8">
         <h2 className="h3 xl:h2 text-light-1">Recent files uploaded</h2>
         {filesData.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">

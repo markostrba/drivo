@@ -6,6 +6,7 @@ export interface GetUserByEmailParams {
 
 export interface SendEmailOTPParams {
   email: string;
+  userId?: string;
 }
 
 export interface VerifyEmailOTPParams {
@@ -60,4 +61,16 @@ export interface GetFileAnalyticsResponse {
   images: DocAnalytics;
   media: DocAnalytics;
   others: DocAnalytics;
+}
+
+export interface UpdateAvatarParams {
+  newAvatar: File;
+  pathname: string;
+}
+
+export interface UpdateEmailParams {
+  newEmail: string;
+  pathname: string;
+  userId: string;
+  otp: string;
 }

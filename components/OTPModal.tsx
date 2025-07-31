@@ -7,46 +7,33 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { sendEmailOTP, verifyEmailOTP } from "@/lib/actions/user.action";
+import { sendEmailOTP } from "@/lib/actions/user.action";
 
 import { AlertDialogDescription } from "@radix-ui/react-alert-dialog";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import OtpInput from "react-otp-input";
 import { toast } from "sonner";
 const OTPModal = ({
-  accountId,
   email,
   isOpen,
   onClose,
+  onSubmit,
 }: {
-  accountId: string;
   email: string;
   isOpen: boolean;
   onClose: () => void;
+  onSubmit: (otp: string) => void;
 }) => {
-  const router = useRouter();
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("handleSubmit", accountId, otp);
-    const { success, data, error } = await verifyEmailOTP({
-      accountId,
-      otpCode: otp,
-    });
+    await onSubmit(otp);
     setIsLoading(false);
-
-    if (!success || !data) {
-      console.log("submit otp", error);
-      toast.error(error?.message);
-      return;
-    }
-    if (data.sessionId) return router.push("/");
   };
 
   const handleClose = () => {

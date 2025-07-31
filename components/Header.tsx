@@ -16,7 +16,7 @@ const Header = ({
       <Search ownerId={ownerId} userEmail={email} />
       <div className="flex h-[52px] items-center gap-3 lg:gap-9">
         <FileUploader accountId={accountId} ownerId={ownerId} />
-        <div>
+        <div className="max-h-[52px]">
           <UserDropdown
             accountId={accountId}
             $id={ownerId}

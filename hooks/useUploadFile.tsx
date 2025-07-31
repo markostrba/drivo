@@ -4,6 +4,7 @@ import handleError from "@/lib/handlers/error";
 import { generateImageUrl, getFileType } from "@/lib/utils";
 import { ID } from "node-appwrite";
 import { useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 const client = new Client()
   .setEndpoint(appwriteConfig.endpointUrl)
@@ -19,6 +20,7 @@ interface Props {
 
 const useUploadFile = ({ accountId, ownerId }: Props) => {
   const canceledFiles = useRef<Set<string>>(new Set());
+  const router = useRouter();
 
   const uploadFile = useCallback(
     async (
@@ -65,9 +67,11 @@ const useUploadFile = ({ accountId, ownerId }: Props) => {
         return newFile;
       } catch (err) {
         return handleError(err);
+      } finally {
+        router.refresh();
       }
     },
-    [accountId, ownerId], // ✅ include dependencies
+    [accountId, ownerId, router],
   );
 
   const cancelUploadFile = async (fileName: string) => {

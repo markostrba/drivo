@@ -25,6 +25,7 @@ export const VerifyEmailOTPSchema = z.object({
 
 export const SendEmailOTPSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
+  userId: z.string().optional(),
 });
 
 export const GetFilesSchema = z.object({
@@ -53,4 +54,30 @@ export const DeleteFileSchema = z.object({
   userId: z.string(),
   bucketFileId: z.string(),
   pathname: z.string(),
+});
+
+export const UpdateAvatarSchema = z.object({
+  newAvatar: z
+    .any()
+    .refine((file): file is File => file instanceof File, {
+      message: "Invalid input: not a file.",
+    })
+    .refine((file) => file.size <= 5 * 1024 * 1024, {
+      message: "File is too large. Max size is 5MB.",
+    })
+    .refine(
+      (file) => ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
+      {
+        message:
+          "Invalid file type. Only PNG, JPG, and JPEG files are allowed.",
+      },
+    ),
+  pathname: z.string(),
+});
+
+export const UpdateEmailSchema = z.object({
+  newEmail: z.string().email({ message: "Invalid email" }),
+  pathname: z.string(),
+  userId: z.string(),
+  otp: z.string(),
 });

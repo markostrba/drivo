@@ -15,10 +15,15 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { SignInSchema, SignUpSchema } from "@/lib/validations";
-import { createAccount, signIn } from "@/lib/actions/user.action";
+import {
+  createAccount,
+  signIn,
+  verifyEmailOTP,
+} from "@/lib/actions/user.action";
 import OTPModal from "./OTPModal";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   formType: "SIGN_IN" | "SIGN_UP";
@@ -28,6 +33,7 @@ const AuthForm = ({ formType }: Props) => {
   const isSignIn = formType === "SIGN_IN";
   const [isOtpOpen, setIsOtpOpen] = useState(false);
   const [accountId, setAccountId] = useState("");
+  const router = useRouter();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignInSchema | typeof SignUpSchema>>({
@@ -70,6 +76,20 @@ const AuthForm = ({ formType }: Props) => {
     setIsOtpOpen(false);
   };
 
+  const handleOTPSubmit = async (otp: string) => {
+    console.log({ accountId });
+    const { success, data, error } = await verifyEmailOTP({
+      accountId,
+      otpCode: otp,
+    });
+
+    if (!success || !data) {
+      console.log("submit otp", error);
+      toast.error(error?.message);
+      return;
+    }
+    if (data.sessionId) return router.push("/");
+  };
   return (
     <>
       <Form {...form}>
@@ -152,10 +172,10 @@ const AuthForm = ({ formType }: Props) => {
         </form>
       </Form>
       <OTPModal
-        accountId={accountId}
         email={form.getValues("email")}
         isOpen={isOtpOpen}
         onClose={handleOTPClose}
+        onSubmit={handleOTPSubmit}
       />
     </>
   );

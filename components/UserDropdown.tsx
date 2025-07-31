@@ -7,7 +7,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Dialog } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogDescription,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import Image from "next/image";
 import { LogOut, User as UserIcon } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -55,6 +59,9 @@ const UserDropdown = ({
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={handleCloseDialog}>
+      <DialogHeader>
+        <DialogDescription className="sr-only">Settings menu</DialogDescription>
+      </DialogHeader>
       <DropdownMenu>
         <DropdownMenuTrigger className="focus-visible:outline-0">
           <div className="cursor-pointer">
@@ -70,7 +77,7 @@ const UserDropdown = ({
             />
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="text-light-1 min-w-[200px]">
+        <DropdownMenuContent className="text-light-1 min-w-[250px]">
           <DropdownMenuLabel className="flex items-center gap-2">
             <Image
               src={avatar}
@@ -89,7 +96,6 @@ const UserDropdown = ({
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="!body-2"
-            disabled
             onClick={() => setIsDialogOpen(true)}
           >
             <div className="flex items-center gap-1">

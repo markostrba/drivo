@@ -37,3 +37,9 @@ export interface DocAnalytics {
   usedSpace: number;
   lastUpdate: string;
 }
+
+export enum UserDialogAction {
+  Default = "Settings",
+  Account = "Account",
+  Subscription = "Subscription",
+}

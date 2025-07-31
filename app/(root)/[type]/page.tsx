@@ -54,7 +54,7 @@ const Page = async ({
   };
 
   return (
-    <div className="flex flex-col gap-9 pr-[40px] pb-[58px] pl-[37px] md:pt-[34px]">
+    <div className="flex flex-col gap-9 md:pt-[34px] md:pr-[40px] md:pb-[58px] md:pl-[37px]">
       {result.success ? (
         <>
           <section className="text-light-1">

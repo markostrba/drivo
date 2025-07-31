@@ -39,9 +39,16 @@ export const createQueries = async (
 
   if (type.length) queries.push(Query.equal("type", type));
   if (searchText) queries.push(Query.contains("name", searchText));
+  console.log("sort1", {
+    currentUserId,
+    currentUserEmail,
+    type,
+    searchText,
+    sort,
+  });
   if (sort) {
     const [sortBy, orderBy] = sort.split("-");
-
+    console.log("sort", { orderBy, sort });
     queries.push(
       orderBy === "asc" ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy),
     );
@@ -82,6 +89,7 @@ export const getFiles = async (
       appwriteConfig.filesCollectionId,
       queries,
     );
+    files.documents.forEach((document) => console.log(document));
     return { success: true, data: files };
   } catch (err) {
     return handleError(err) as ErrorResponse;

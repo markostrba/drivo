@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import React, { useState } from "react";
 import {
   Sheet,
@@ -7,7 +6,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Button } from "./ui/button";
 import FileUploader from "./FileUploader";
 import NavLinks from "./NavLinks";
 import { User } from "@/types";
@@ -109,28 +107,15 @@ const MobileNavigation = ({
             <SheetTrigger>
               <HamburgerIcon aria-label="Open menu" />
             </SheetTrigger>
-            <SheetContent className="h-screen px-3 pt-8" side="left">
+            <SheetContent className="h-screen px-3 pt-13" side="left">
               <SheetTitle className="sr-only">menu</SheetTitle>
               <NavLinks isMobileNav className="justify-start" />
               <div className="flex flex-col justify-between gap-5 pb-5">
                 <FileUploader
                   accountId={accountId}
                   ownerId={ownerId}
-                  className="w-full"
+                  className="w-full rounded-2xl py-8"
                 />
-                <Button
-                  type="submit"
-                  className="h5 bg-brand/10 text-brand hover:bg-brand/20 flex h-[52px] w-full items-center gap-4 rounded-full px-6 shadow-none transition-all"
-                  onClick={async () => {}}
-                >
-                  <Image
-                    src="/assets/icons/logout.svg"
-                    alt="logo"
-                    width={24}
-                    height={24}
-                  />
-                  <p>Logout</p>
-                </Button>
               </div>
             </SheetContent>
           </Sheet>

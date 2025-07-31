@@ -77,7 +77,9 @@ const AuthForm = ({ formType }: Props) => {
   };
 
   const handleOTPSubmit = async (otp: string) => {
-    console.log({ accountId });
+    if (!accountId) {
+      return toast.error("Invalid OTP code");
+    }
     const { success, data, error } = await verifyEmailOTP({
       accountId,
       otpCode: otp,

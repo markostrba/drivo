@@ -204,7 +204,9 @@ export const signIn = async (
     console.log({ email });
     const existingUser = await getUserByEmail({ email });
     console.log({ existingUser });
-    await sendEmailOTP({ email });
+    if (existingUser) {
+      await sendEmailOTP({ email });
+    }
 
     return { success: true, data: { accountId: existingUser?.accountId } };
   } catch (error) {
@@ -344,16 +346,16 @@ export const updateEmail = async (
       user.data.accountId, // userId
     );
 
-    await users.updateEmailVerification(
-      user.data.accountId, // userId
-      true, // emailVerification
-    );
-
     console.log({ result });
 
     await users.updateEmail(
       user.data.accountId, // userId
       newEmail, // email
+    );
+
+    await users.updateEmailVerification(
+      user.data.accountId, // userId
+      true, // emailVerification
     );
 
     await databases.updateDocument(

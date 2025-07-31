@@ -21,7 +21,7 @@ const Thumbnail = ({
   return (
     <div
       className={cn(
-        "flex-center bg-brand/10 size-[50px] min-w-[50px] overflow-hidden rounded-full",
+        "bg-brand/10 flex size-[50px] min-w-[50px] items-center justify-center overflow-hidden rounded-full",
         className,
       )}
     >
@@ -33,7 +33,7 @@ const Thumbnail = ({
         className={cn(
           "size-8 object-contain",
           imageClassName,
-          isImage && "size-full object-cover object-center",
+          isImage && "!size-full !object-cover !object-center",
         )}
       />
     </div>

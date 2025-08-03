@@ -127,6 +127,7 @@ const UserDropdown = ({
         setAction={setAction}
         avatar={avatar}
         userId={userId}
+        plan={plan}
         {...userProps}
       />
     </Dialog>

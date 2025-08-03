@@ -1,6 +1,6 @@
 "use client";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
+import { cn, getPlan } from "@/lib/utils";
 import { UserDialogAction } from "@/types";
 import {
   ChevronLeft,
@@ -15,6 +15,7 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
+  useEffect,
   useState,
   useTransition,
 } from "react";
@@ -48,6 +49,8 @@ import {
 } from "./ui/alert-dialog";
 import { Label } from "./ui/label";
 import { Separator } from "./ui/separator";
+import PlanCard from "./PlanCard";
+import { Skeleton } from "./ui/skeleton";
 
 const AccountSettings = ({
   avatar,
@@ -290,8 +293,61 @@ const AccountSettings = ({
   );
 };
 
-const SubscriptionSettings = () => {
-  return <div>subscription</div>;
+const SubscriptionSettings = ({
+  userPlan,
+  action,
+}: {
+  userPlan: string;
+  action: UserDialogAction;
+}) => {
+  const plan = userPlan ? getPlan(userPlan, null) : getPlan("Free", null);
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
+  useEffect(() => {
+    if (action !== UserDialogAction.Subscription) return;
+    const fetchData = async () => {
+      setIsLoading(true);
+      const res = await fetch("/api/payments");
+      const { success, data } = await res.json();
+      if (!success) {
+        setFetchError(false);
+        setIsLoading(false);
+        return;
+      }
+      setRemainingTime(data.remainingPeriod);
+      setIsLoading(false);
+    };
+    fetchData();
+  }, [action]);
+
+  if (isLoading) {
+    return <Skeleton className="h-[382px]" />;
+  }
+
+  if (!plan || fetchError)
+    return (
+      <div className="flex h-full items-center justify-center">
+        Something went wrong
+      </div>
+    );
+
+  return (
+    <div className="items-cener flex justify-center">
+      <div className="bg-brand rounded-2xl p-[3px] shadow-lg lg:mb-5">
+        <p className="body-1 py-2 text-center text-white">Your Current Plan</p>
+
+        <PlanCard
+          {...plan}
+          description={`${remainingTime} days remaining`}
+          descriptionStyle="h-fit"
+          headerStyle="gap-0"
+          planButtonText="Cancel Plan"
+          cardStyle="lg:hover:scale-100"
+        />
+      </div>
+    </div>
+  );
 };
 
 const UserDialogContent = ({
@@ -301,6 +357,7 @@ const UserDialogContent = ({
   setAction,
   fullName,
   userId,
+  plan,
 }: {
   action: UserDialogAction;
   setAction: Dispatch<SetStateAction<UserDialogAction>>;
@@ -308,6 +365,7 @@ const UserDialogContent = ({
   avatar: string;
   fullName: string;
   userId: string;
+  plan: string;
 }) => {
   return (
     <DialogContent className="text-light-1 flex min-h-[500px] flex-col !rounded-[30px] p-0 md:min-w-[600px] lg:!top-[35%]">
@@ -382,7 +440,9 @@ const UserDialogContent = ({
               userId={userId}
             />
           )}
-          {UserDialogAction.Subscription === action && <SubscriptionSettings />}
+          {UserDialogAction.Subscription === action && (
+            <SubscriptionSettings userPlan={plan} action={action} />
+          )}
         </div>
       </div>
     </DialogContent>

@@ -20,15 +20,19 @@ interface Props {
   cardStyle?: string;
   planButtonText?: string;
   buttonStyle?: string;
+  descriptionStyle?: string;
+  headerStyle?: string;
   buttonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
 }
 
 const PlanCard = ({
   title,
   description,
+  descriptionStyle,
   price,
   perks,
   cardStyle,
+  headerStyle,
   planButtonText = "Get started",
   buttonStyle,
   buttonProps,
@@ -40,9 +44,11 @@ const PlanCard = ({
         cardStyle,
       )}
     >
-      <CardHeader className="gap-5">
+      <CardHeader className={cn("gap-5", headerStyle)}>
         <CardTitle className="!h3">{title}</CardTitle>
-        <CardDescription className="h-[60px]">{description}</CardDescription>
+        <CardDescription className={cn("h-[60px]", descriptionStyle)}>
+          {description}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-7">
         <div className="flex items-end gap-1">

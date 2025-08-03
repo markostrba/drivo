@@ -50,6 +50,14 @@ export async function GET() {
     const card = paymentMethod.card;
     if (!card) throw new Error("Card details missing");
 
+    const currentTime = Math.floor(Date.now() / 1000);
+    const periodEnd = stripeSub.items.data[0].current_period_end;
+    const remainingSeconds = periodEnd - currentTime;
+    const remainingDays = Math.max(
+      Math.floor(remainingSeconds / (60 * 60 * 24)),
+      0,
+    );
+
     return NextResponse.json(
       {
         success: true,
@@ -60,6 +68,7 @@ export async function GET() {
           last4: card.last4,
           expMonth: card.exp_month,
           expYear: card.exp_year,
+          remainingPeriod: remainingDays,
         },
       },
       { status: 200 },

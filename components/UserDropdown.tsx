@@ -76,7 +76,7 @@ const UserDropdown = ({
               width={52}
               height={52}
               className={cn(
-                "aspect-square rounded-full object-cover hover:scale-105 focus-visible:outline-0",
+                "xl:shadow-2 aspect-square rounded-full object-cover hover:scale-105 focus-visible:outline-0",
                 avatarClassName,
               )}
             />

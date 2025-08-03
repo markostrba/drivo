@@ -28,6 +28,7 @@ import {
   VerifyEmailOTPParams,
 } from "@/types/action";
 import { revalidatePath } from "next/cache";
+import { stripe } from "../stripe";
 
 export const getUsersByEmail = async (
   email: string[],
@@ -328,19 +329,9 @@ export const updateEmail = async (
 
     const { databases, users } = await createAdminClient();
 
-    await users.get(
-      user.data.accountId, // userId
-    );
+    await users.updateEmail(user.data.accountId, newEmail);
 
-    await users.updateEmail(
-      user.data.accountId, // userId
-      newEmail, // email
-    );
-
-    await users.updateEmailVerification(
-      user.data.accountId, // userId
-      true, // emailVerification
-    );
+    await users.updateEmailVerification(user.data.accountId, true);
 
     await databases.updateDocument(
       appwriteConfig.databaseId,
@@ -351,6 +342,12 @@ export const updateEmail = async (
         otp: null,
       },
     );
+
+    if (user.data.stripeCustomerId) {
+      await stripe.customers.update(user.data.stripeCustomerId, {
+        email: newEmail,
+      });
+    }
 
     revalidatePath(pathname);
     return { success: true };
@@ -398,7 +395,7 @@ export const deleteAccount = async (): Promise<ActionResponse> => {
     await users.delete(user.data.accountId);
     return { success: true };
   } catch (err) {
-    return handleError(err) as ErrorResponse;
     console.log(err);
+    return handleError(err) as ErrorResponse;
   }
 };

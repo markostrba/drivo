@@ -103,7 +103,6 @@ const AccountSettings = ({
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      console.log({ acceptedFiles });
       const { error } = await updateAvatar({
         newAvatar: acceptedFiles[0],
         pathname,

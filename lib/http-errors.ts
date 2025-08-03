@@ -5,8 +5,7 @@ export class RequestError extends Error {
   constructor(
     statusCode: number,
     message: string,
-    // eslint-disable-next-line prettier/prettier
-    errors?: Record<string, string[]>
+    errors?: Record<string, string[]>,
   ) {
     super(message);
     this.statusCode = statusCode;
@@ -33,8 +32,7 @@ export class ValidationError extends RequestError {
         } else {
           return messages.join(" and ");
         }
-        // eslint-disable-next-line prettier/prettier
-      }
+      },
     );
 
     return formattedMessages.join(", ");

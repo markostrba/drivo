@@ -32,8 +32,6 @@ const MobileNavigation = ({
       userEmail: email,
     });
 
-  console.log(fullName);
-
   const handleClickItem = () => {
     setIsOpen(false);
     setIsSearchOpen(false);

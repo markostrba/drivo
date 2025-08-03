@@ -1,9 +1,4 @@
-function getEnv(name: string, value: string | undefined): string {
-  if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
-  }
-  return value;
-}
+import { getEnv } from "../utils";
 
 export const appwriteConfig = {
   projectId: getEnv(

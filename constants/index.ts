@@ -1,3 +1,4 @@
+import { getEnv } from "@/lib/utils";
 import { DocAnalytics } from "@/types";
 
 export const navItems = [
@@ -40,6 +41,14 @@ export const navItems = [
       light: "/assets/icons/others-light.svg",
     },
     url: "/others",
+  },
+  {
+    name: "Plans",
+    icon: {
+      dark: "/assets/icons/gem.svg",
+      light: "/assets/icons/gem-light.svg",
+    },
+    url: "/plans",
   },
 ];
 
@@ -147,3 +156,44 @@ export const getUsageSummary = ({
     url: "/others",
   },
 ];
+
+export const plans = [
+  {
+    title: "Free",
+    description:
+      "Get started with essential features. No credit card required.",
+    price: 0,
+    priceId: undefined,
+    url: "/",
+    perks: ["500MB Storage", "Upload up to 3 files simultaneously"],
+  },
+  {
+    title: "Starter",
+    description:
+      "Upgrade for more storage and higher upload limits—ideal for growing needs.",
+    price: 9.99,
+    priceId: getEnv(
+      "STRIPE_STARTER_PRICE_ID",
+      process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID,
+    ),
+    url: "/buy/",
+    perks: ["1GB Storage", "Upload up to 10 files simultaneously"],
+  },
+  {
+    title: "Pro",
+    description:
+      "Unlock the full potential with advanced capacity and maximum flexibility.",
+    price: 19.99,
+    priceId: getEnv(
+      "STRIPE_PRO_PRICE_ID",
+      process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
+    ),
+    url: "/buy/",
+    perks: ["3GB Storage", "Upload up to 20 files simultaneously"],
+  },
+];
+
+export const PUBLIC_URL = getEnv(
+  "PUBLIC_HOST_URL",
+  process.env.NEXT_PUBLIC_HOST_URL,
+);

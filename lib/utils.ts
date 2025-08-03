@@ -4,6 +4,7 @@ import { ZodError, ZodSchema } from "zod";
 import { ValidationError } from "./http-errors";
 import { FileType, ValidationParams } from "@/types";
 import { appwriteConfig } from "./appwrite/config";
+import { plans } from "@/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -215,4 +216,19 @@ export const formatDateTime = (isoString: string | null | undefined) => {
   const month = monthNames[date.getMonth()];
 
   return `${time}, ${day} ${month}`;
+};
+
+export function getEnv(name: string, value: string | undefined): string {
+  if (!value) {
+    throw new Error(`Missing environment variable: ${name}`);
+  }
+  return value;
+}
+
+export const getPlan = (title: string | null, priceId: string | null) => {
+  return title
+    ? plans.find((plan) => plan.title?.toLowerCase() === title?.toLowerCase())
+    : plans.find(
+        (plan) => plan.priceId?.toLowerCase() === priceId?.toLowerCase(),
+      );
 };

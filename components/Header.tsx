@@ -10,7 +10,11 @@ const Header = ({
   email,
   avatar,
   fullName,
-}: Pick<User, "email" | "fullName" | "avatar" | "accountId" | "$id">) => {
+  plan,
+}: Pick<
+  User,
+  "email" | "fullName" | "avatar" | "accountId" | "$id" | "plan"
+>) => {
   return (
     <header className="hidden items-center justify-between gap-5 p-5 lg:pr-15 xl:flex">
       <Search ownerId={ownerId} userEmail={email} />
@@ -23,6 +27,7 @@ const Header = ({
             email={email}
             avatar={avatar}
             fullName={fullName}
+            plan={plan}
           />
         </div>
       </div>

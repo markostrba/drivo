@@ -24,7 +24,11 @@ const MobileNavigation = ({
   avatar,
   accountId,
   $id: ownerId,
-}: Pick<User, "email" | "fullName" | "avatar" | "accountId" | "$id">) => {
+  plan,
+}: Pick<
+  User,
+  "email" | "fullName" | "avatar" | "accountId" | "$id" | "plan"
+>) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { query, setQuery, results, isLoading, isOpen, setIsOpen, setResults } =
     useSearch({
@@ -129,6 +133,7 @@ const MobileNavigation = ({
             avatar={avatar}
             fullName={fullName}
             accountId={accountId}
+            plan={plan}
             $id={ownerId}
             avatarClassName="size-8"
           />

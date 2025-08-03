@@ -21,9 +21,13 @@ import { signOutUser } from "@/lib/actions/user.action";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import SubscriptionBadge from "./SubscriptionBadge";
 
 interface Props
-  extends Pick<User, "fullName" | "avatar" | "email" | "accountId" | "$id"> {
+  extends Pick<
+    User,
+    "fullName" | "avatar" | "email" | "accountId" | "$id" | "plan"
+  > {
   avatarClassName?: string;
 }
 
@@ -31,6 +35,7 @@ const UserDropdown = ({
   avatar,
   $id: userId,
   avatarClassName,
+  plan,
   ...userProps
 }: Props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -90,7 +95,10 @@ const UserDropdown = ({
               <span className="text-[14px] font-medium">
                 {userProps.fullName}
               </span>
-              <span className="text-[10px] leading-2">{userProps.email}</span>
+              <span className="mb-1.5 text-[10px] leading-2">
+                {userProps.email}
+              </span>
+              <SubscriptionBadge plan={plan || "Free"} />
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />

@@ -114,8 +114,8 @@ const MobileNavigation = ({
               <NavLinks isMobileNav className="justify-start" />
               <div className="flex flex-col justify-between gap-5 pb-5">
                 <FileUploader
-                  accountId={accountId}
                   ownerId={ownerId}
+                  plan={plan}
                   className="w-full rounded-2xl py-8"
                 />
               </div>

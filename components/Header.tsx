@@ -19,7 +19,7 @@ const Header = ({
     <header className="hidden items-center justify-between gap-5 p-5 lg:pr-15 xl:flex">
       <Search ownerId={ownerId} userEmail={email} />
       <div className="flex h-[52px] items-center gap-3 lg:gap-9">
-        <FileUploader accountId={accountId} ownerId={ownerId} />
+        <FileUploader ownerId={ownerId} plan={plan} />
         <div className="max-h-[52px]">
           <UserDropdown
             accountId={accountId}

@@ -28,7 +28,7 @@ export interface User extends Models.Document {
   email: string;
   accountId: string;
   stripeCustomerId: string;
-  plan: string;
+  plan: Plans;
   otp: string;
 }
 
@@ -48,3 +48,5 @@ export enum UserDialogAction {
   Account = "Account",
   Subscription = "Subscription",
 }
+
+export type Plans = null | "Free" | "Starter" | "Pro";

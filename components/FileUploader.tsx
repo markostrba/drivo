@@ -1,29 +1,34 @@
 "use client";
 import React, { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import { FileRejection, useDropzone } from "react-dropzone";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { MAX_FILE_SIZE } from "@/constants";
 import { toast } from "sonner";
 // import { uploadFile } from "@/lib/actions/file.action";
-import { cn, convertFileToUrl, getFileType } from "@/lib/utils";
+import {
+  cn,
+  convertFileSize,
+  convertFileToUrl,
+  getFileType,
+} from "@/lib/utils";
 import useUploadFile from "@/hooks/useUploadFile";
 import { UploadProgress } from "appwrite";
 import { Progress } from "@/components/ui/progress";
 import Thumbnail from "./Thumbnail";
+import { MAX_FILE_SIZE, PLAN_FILE_RULES } from "@/constants";
+import { Plans } from "@/types";
 interface Props {
-  accountId: string;
   ownerId: string;
   className?: string;
+  plan: Plans;
 }
 
-const FileUploader = ({ ownerId, accountId, className }: Props) => {
+const FileUploader = ({ ownerId, className, plan }: Props) => {
   const [files, setFiles] = useState<{ file: File; progress: number }[]>([]);
   const { uploadFile, cancelUploadFile } = useUploadFile({
-    accountId,
     ownerId,
   });
-
+  const userPlan = plan || "Free";
   const onProgress = (progress: UploadProgress, fileName: string) => {
     setFiles((prevFiles) =>
       prevFiles.map((prevFile) =>
@@ -45,7 +50,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
           );
 
           return toast(file.name, {
-            description: "Max file size is 50MB",
+            description: `Max file size is ${convertFileSize(MAX_FILE_SIZE)}`,
             classNames: {
               title: "font-semibold!",
               description: "body-2!",
@@ -56,6 +61,16 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
 
         return uploadFile(file, onProgress)
           .then((uploadFile) => {
+            if (!uploadFile.success) {
+              toast(uploadFile.error.message, {
+                classNames: {
+                  title: "font-semibold!",
+                  description: "body-2!",
+                },
+                className: "!text-white !bg-red !rounded-[10px]",
+              });
+            }
+            console.log("[FileUploader]", { uploadFile });
             if (uploadFile) {
               setFiles((prevFiles) =>
                 prevFiles.filter(
@@ -65,14 +80,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
             }
           })
           .catch((err) => {
-            console.log(err);
-            toast(err.message, {
-              classNames: {
-                title: "font-semibold!",
-                description: "body-2!",
-              },
-              className: "!text-white !bg-red !rounded-[10px]",
-            });
+            console.log("[FileUploader]", { err });
           });
       });
 
@@ -80,9 +88,35 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
     },
     [uploadFile],
   );
+  const onDropRejected = useCallback(
+    (fileRejections: FileRejection[]) => {
+      const error = fileRejections[0]?.errors[0];
+      switch (error.code) {
+        case "file-too-large":
+          toast.error("Failed to upload picture", {
+            description: "File is too large. Max size is 5MB.",
+          });
+          break;
+        case "too-many-files":
+          toast.error("Failed to upload picture", {
+            description: `Your current plan allows up to ${
+              PLAN_FILE_RULES.find((planRule) => planRule.plan === userPlan)
+                ?.uploadLimit
+            } file uploads at a time.`,
+          });
+          break;
+        default:
+          toast.error("File could not be uploaded.");
+      }
+    },
+    [userPlan],
+  );
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
+    onDropRejected,
     noClick: true,
+    maxFiles: PLAN_FILE_RULES.find((planRule) => planRule.plan === userPlan)
+      ?.uploadLimit,
   });
 
   const handleDelete = (e: React.MouseEvent, fileName: string) => {

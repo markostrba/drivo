@@ -4,7 +4,7 @@ import CircularProgress from "@/components/CircularProgress";
 import ErrorToast from "@/components/ErrorToast";
 import FormattedDateTime from "@/components/FormattedDateTime";
 import Thumbnail from "@/components/Thumbnail";
-import { getUsageSummary } from "@/constants";
+import { getUsageSummary, PLAN_FILE_RULES } from "@/constants";
 import { getFileAnalytics, getFiles } from "@/lib/actions/file.action";
 import { getCurrentUser } from "@/lib/actions/user.action";
 import { convertFileSize } from "@/lib/utils";
@@ -40,7 +40,10 @@ const DashboardPage = async ({
     getFileAnalytics({ userId: user.$id }),
   ]);
 
-  const storageLimit = 65536000;
+  const userPlan = user.plan || "Free";
+  const storageLimit = PLAN_FILE_RULES.find(
+    (planRule) => planRule.plan === userPlan,
+  )?.maxSize;
   const usageSummary = getUsageSummary(analytics || {});
   const totalUsedSpace = analytics?.totalUsedSpace || 0;
   const filesData = files?.documents || [];
@@ -52,7 +55,7 @@ const DashboardPage = async ({
           <div className="flex items-center justify-center">
             <div className="relative aspect-square xl:max-h-[190px]">
               <CircularProgress
-                value={Math.round((totalUsedSpace / storageLimit) * 100)}
+                value={Math.round((totalUsedSpace / storageLimit!) * 100)}
               />
             </div>
           </div>
@@ -61,7 +64,7 @@ const DashboardPage = async ({
             <h1 className="h3">Available Storage</h1>
             <p className="subtitle-1 text-center">
               {convertFileSize(totalUsedSpace)} /{" "}
-              {convertFileSize(storageLimit)}
+              {convertFileSize(storageLimit!)}
             </p>
           </div>
         </div>

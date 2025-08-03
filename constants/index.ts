@@ -55,7 +55,25 @@ export const navItems = [
 export const avatarPlaceholderUrl =
   "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg";
 
-export const MAX_FILE_SIZE = 50 * 1024 * 1024;
+export const PLAN_FILE_RULES = [
+  {
+    plan: "Free",
+    maxSize: 500 * 1024 * 1024,
+    uploadLimit: 3,
+  },
+  {
+    plan: "Starter",
+    maxSize: 1024 * 1024 * 1024,
+    uploadLimit: 10,
+  },
+  {
+    plan: "Pro",
+    maxSize: 3 * 1024 * 1024 * 1024,
+    uploadLimit: 20,
+  },
+];
+
+export const MAX_FILE_SIZE = 5000 * 1024 * 1024;
 
 export const actionsDropdownItems = [
   {

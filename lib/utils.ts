@@ -156,19 +156,16 @@ export const getFileTypesParams = (type: string) => {
   }
 };
 
-export const convertFileSize = (sizeInBytes: number, digits?: number) => {
-  if (sizeInBytes < 1024) {
-    return sizeInBytes + " Bytes"; // Less than 1 KB, show in Bytes
-  } else if (sizeInBytes < 1024 * 1024) {
-    const sizeInKB = sizeInBytes / 1024;
-    return sizeInKB.toFixed(digits || 1) + " KB"; // Less than 1 MB, show in KB
-  } else if (sizeInBytes < 1024 * 1024 * 1024) {
-    const sizeInMB = sizeInBytes / (1024 * 1024);
-    return sizeInMB.toFixed(digits || 1) + " MB"; // Less than 1 GB, show in MB
-  } else {
-    const sizeInGB = sizeInBytes / (1024 * 1024 * 1024);
-    return sizeInGB.toFixed(digits || 1) + " GB"; // 1 GB or more, show in GB
-  }
+export const convertFileSize = (bytes: number, digits = 2): string => {
+  if (bytes === 0) return "0 Bytes";
+
+  const units = ["Bytes", "KB", "MB", "GB", "TB"];
+  const k = 1024;
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  console.log("[convertFileSize]", { i, bytes });
+  const size = bytes / Math.pow(k, i);
+
+  return `${size.toFixed(digits)} ${units[i]}`;
 };
 
 export function generateImageUrl(bucketFieldId: string) {

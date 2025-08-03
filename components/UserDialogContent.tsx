@@ -1,7 +1,7 @@
 "use client";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn, getPlan } from "@/lib/utils";
-import { UserDialogAction } from "@/types";
+import { Plans, UserDialogAction } from "@/types";
 import {
   ChevronLeft,
   ChevronRight,
@@ -297,7 +297,7 @@ const SubscriptionSettings = ({
   userPlan,
   action,
 }: {
-  userPlan: string;
+  userPlan: Plans;
   action: UserDialogAction;
 }) => {
   const plan = userPlan ? getPlan(userPlan, null) : getPlan("Free", null);
@@ -365,7 +365,7 @@ const UserDialogContent = ({
   avatar: string;
   fullName: string;
   userId: string;
-  plan: string;
+  plan: Plans;
 }) => {
   return (
     <DialogContent className="text-light-1 flex min-h-[500px] flex-col !rounded-[30px] p-0 md:min-w-[600px] lg:!top-[35%]">

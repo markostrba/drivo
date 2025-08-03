@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import { Models } from "node-appwrite";
 import { ZodSchema } from "zod";
 
@@ -11,6 +12,7 @@ export type ActionResponse<T = null> = {
 };
 
 export type ErrorResponse = ActionResponse<undefined> & { success: false };
+export type APIErrorResponse = NextResponse<ErrorResponse>;
 
 export type ValidationParams<T> = {
   params?: T;
@@ -25,6 +27,9 @@ export interface User extends Models.Document {
   avatar: string;
   email: string;
   accountId: string;
+  stripeCustomerId: string;
+  plan: string;
+  otp: string;
 }
 
 export interface ActionType {

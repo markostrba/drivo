@@ -82,10 +82,8 @@ export const sendEmailOTP = async (
       schema: SendEmailOTPSchema,
     });
     if (validationResult instanceof Error) {
-      console.log(validationResult);
       return handleError(validationResult) as ErrorResponse;
     }
-    console.log("email called");
 
     const { userId, email } = validationResult.params!;
 
@@ -97,7 +95,6 @@ export const sendEmailOTP = async (
     );
 
     const user = await getUserByEmail({ email });
-    console.log("sendEmail", { user, session });
     if (user) {
       await databases.updateDocument(
         appwriteConfig.databaseId,
@@ -106,7 +103,7 @@ export const sendEmailOTP = async (
         { otp: session.secret },
       );
     }
-
+    console.log({ session });
     return { success: true, data: { accountId: session.userId } };
   } catch (error) {
     console.log(error, "Failed to send email OTP");
@@ -118,8 +115,6 @@ export const verifyEmailOTP = async (
   params: VerifyEmailOTPParams,
 ): Promise<ActionResponse<{ sessionId: string }>> => {
   try {
-    console.log({ params });
-
     const validationResult = await validate({
       params,
       schema: VerifyEmailOTPSchema,
@@ -132,12 +127,11 @@ export const verifyEmailOTP = async (
     const { accountId, otpCode } = validationResult.params;
     const { account } = await createAdminClient();
 
-    console.log({ account, otpCode });
     const session = await account.createSession(accountId, otpCode);
     (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
       secure: true,
     });
 
@@ -193,7 +187,6 @@ export const signIn = async (
   params: SignInParams,
 ): Promise<ActionResponse<{ accountId: string }>> => {
   try {
-    console.log("sign in called");
     const validationResult = await validate({ params, schema: SignInSchema });
 
     if (validationResult instanceof Error) {
@@ -201,9 +194,7 @@ export const signIn = async (
     }
 
     const { email } = validationResult.params!;
-    console.log({ email });
     const existingUser = await getUserByEmail({ email });
-    console.log({ existingUser });
     if (existingUser) {
       await sendEmailOTP({ email });
     }
@@ -241,7 +232,7 @@ export const signOutUser = async (): Promise<ActionResponse> => {
     (await cookies()).delete("appwrite-session");
     return { success: true };
   } catch (error) {
-    return handleError(error);
+    return handleError(error) as ErrorResponse;
   }
 };
 
@@ -255,13 +246,12 @@ export const updateAvatar = async (
     });
 
     if (validationResult instanceof Error) {
-      return handleError(validationResult);
+      return handleError(validationResult) as ErrorResponse;
     }
 
     const { newAvatar, pathname } = validationResult.params;
 
     const newAvatarFile = InputFile.fromBuffer(newAvatar, newAvatar.name);
-    console.log({ newAvatarFile });
     const user = await getCurrentUser();
 
     if (user.error) {
@@ -271,8 +261,6 @@ export const updateAvatar = async (
     if (!user.data) {
       throw new UnauthorizedError("User session not found");
     }
-
-    console.log("bucketFieldId", user.data.bucketFieldId);
 
     const { storage, databases } = await createAdminClient();
 
@@ -317,8 +305,6 @@ export const updateEmail = async (
     });
 
     if (validationResult instanceof Error) {
-      console.log({ validationResult });
-
       return handleError(validationResult) as ErrorResponse;
     }
 
@@ -342,11 +328,9 @@ export const updateEmail = async (
 
     const { databases, users } = await createAdminClient();
 
-    const result = await users.get(
+    await users.get(
       user.data.accountId, // userId
     );
-
-    console.log({ result });
 
     await users.updateEmail(
       user.data.accountId, // userId
@@ -414,7 +398,7 @@ export const deleteAccount = async (): Promise<ActionResponse> => {
     await users.delete(user.data.accountId);
     return { success: true };
   } catch (err) {
-    return handleError(err);
+    return handleError(err) as ErrorResponse;
     console.log(err);
   }
 };

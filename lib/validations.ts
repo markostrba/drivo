@@ -81,3 +81,7 @@ export const UpdateEmailSchema = z.object({
   userId: z.string(),
   otp: z.string(),
 });
+
+export const PaymentsSchema = z.object({
+  plan: z.enum(["Starter", "Pro"], { message: "Invalid plan" }),
+});

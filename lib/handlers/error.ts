@@ -1,7 +1,11 @@
+import { NextResponse } from "next/server";
 import { RequestError, ValidationError } from "../http-errors";
 import { ZodError } from "zod";
 
+type ResponseType = "api" | "server";
+
 const formatResponse = (
+  responseType: ResponseType,
   statusCode: number,
   message: string,
   errors?: Record<string, string[]> | undefined,
@@ -14,11 +18,18 @@ const formatResponse = (
     },
   };
 
-  return { statusCode, ...response };
+  return responseType === "api"
+    ? NextResponse.json(response, { status: statusCode })
+    : { statusCode, ...response };
 };
-const handleError = (error: unknown) => {
+const handleError = (error: unknown, responseType: ResponseType = "server") => {
   if (error instanceof RequestError) {
-    return formatResponse(error.statusCode, error.message, error.errors);
+    return formatResponse(
+      responseType,
+      error.statusCode,
+      error.message,
+      error.errors,
+    );
   }
   if (error instanceof ZodError) {
     const validationError = new ValidationError(
@@ -26,14 +37,15 @@ const handleError = (error: unknown) => {
     );
 
     return formatResponse(
+      responseType,
       validationError.statusCode,
       validationError.message,
       validationError.errors,
     );
   }
   if (error instanceof Error) {
-    return formatResponse(500, error.message);
+    return formatResponse(responseType, 500, error.message);
   }
-  return formatResponse(500, "An unexpected error occurred");
+  return formatResponse(responseType, 500, "An unexpected error occurred");
 };
 export default handleError;

@@ -387,6 +387,11 @@ export const deleteAccount = async (): Promise<ActionResponse> => {
       await Promise.all(bucketsPromises);
       await Promise.all(fileDocsPromises);
     }
+
+    if (user.data.stripeCustomerId) {
+      await stripe.customers.del(user.data.stripeCustomerId);
+    }
+
     await databases.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.usersCollectionId,

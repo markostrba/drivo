@@ -29,6 +29,8 @@ export interface GetFilesParams {
   type: string[];
   searchText?: string;
   sort?: string;
+  limit?: number;
+  cursorAfter?: string;
 }
 
 export interface RenameFileParams {
@@ -53,6 +55,7 @@ export interface DeleteFileParams {
 
 export interface GetFileAnalyticsParams {
   userId: string;
+  type?: string[];
 }
 
 export interface GetFileAnalyticsResponse {

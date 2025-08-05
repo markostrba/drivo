@@ -1,13 +1,16 @@
-import Card from "@/components/Card";
 import Sort from "@/components/Sort";
-import { getFiles } from "@/lib/actions/file.action";
+import { getFileAnalytics, getFiles } from "@/lib/actions/file.action";
 import { getCurrentUser } from "@/lib/actions/user.action";
 import { convertFileSize, getFileTypesParams } from "@/lib/utils";
 import { redirect } from "next/navigation";
-import { Models } from "node-appwrite";
 import { Metadata } from "next";
 import React from "react";
 import { notFound } from "next/navigation";
+import FileList from "@/components/FileList";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { getQueryClient } from "@/app/getQueryProvider";
+import ErrorToast from "@/components/ErrorToast";
+import { Models } from "node-appwrite";
 export async function generateMetadata({
   params,
 }: {
@@ -20,6 +23,8 @@ export async function generateMetadata({
     title: `${capitalized} - Drivo`,
   };
 }
+
+const BATCH_SIZE = 12;
 
 const Page = async ({
   params,
@@ -35,58 +40,78 @@ const Page = async ({
     notFound();
   }
 
-  const sort = ((await searchParams)?.sort as string) || "";
+  const sort = ((await searchParams)?.sort as string) || "$createdAt-desc";
   const search = ((await searchParams)?.query as string) || "";
+  const queryClient = getQueryClient();
 
-  const result = await getFiles({
-    currentUserId: user?.$id,
-    currentUserEmail: user?.email,
-    type: getFileTypesParams(type),
-    searchText: search,
-    sort,
+  await queryClient.prefetchInfiniteQuery({
+    queryKey: ["files"],
+    queryFn: async ({ pageParam = null }) => {
+      const { error, data: fileDocuments } = await getFiles({
+        currentUserId: user.$id,
+        currentUserEmail: user.email,
+        type: getFileTypesParams(type),
+        searchText: search,
+        sort,
+        limit: BATCH_SIZE,
+        cursorAfter: pageParam ?? undefined,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return fileDocuments;
+    },
+    getNextPageParam: (
+      lastPage: Models.DocumentList<Models.Document> | undefined,
+    ) => {
+      const docs = lastPage?.documents ?? [];
+      if (docs.length < BATCH_SIZE) return undefined;
+      return docs[docs.length - 1].$id;
+    },
+    initialPageParam: null as string | null, // <-- FIX HERE
   });
 
-  const getTotalSize = (documents?: Models.DocumentList<Models.Document>) => {
-    if (!documents) return "0 B";
-    return convertFileSize(
-      documents.documents.reduce((acc, doc) => acc + doc.size, 0),
-    );
-  };
+  const { error, data } = await getFileAnalytics({
+    userId: user.$id,
+    type: getFileTypesParams(type),
+  });
+
+  console.log("[PAGE]", { data, type, fileSize: data?.totalUsedSpace });
 
   return (
     <div className="flex flex-col gap-9 md:pt-[34px] md:pr-[40px] md:pb-[58px] md:pl-[37px]">
-      {result.success ? (
-        <>
-          <section className="text-light-1">
-            <h1 className="h1 mb-2.5">
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </h1>
-            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-              <div className="body-1">
-                Total: <span className="h5">{getTotalSize(result.data)}</span>
-              </div>
-              <Sort />
+      <>
+        <section className="text-light-1">
+          <h1 className="h1 mb-2.5">
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </h1>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div className="body-1">
+              Total:
+              <span className="h5 ml-1">
+                {data && convertFileSize(data?.totalUsedSpace)}
+              </span>
             </div>
-          </section>
+            <Sort />
+          </div>
+        </section>
 
-          {result.data?.total ? (
-            <section className="grid w-full gap-6.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {result.data.documents.map((file) => (
-                <Card key={file.$id} file={file} userId={user.$id} />
-              ))}
-            </section>
-          ) : (
-            <p className="body-1 text-light-2 mt-45 text-center">
-              No Files Uploaded
-            </p>
-          )}
-        </>
-      ) : (
-        <div className="p-4 text-center text-red-500">
-          <h2 className="text-xl font-semibold">Error loading files</h2>
-          <p>{result?.error?.message || "Please try again later."}</p>
-        </div>
-      )}
+        <section className="grid w-full gap-6.5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <FileList
+              currentUserId={user.$id}
+              currentUserEmail={user.email}
+              type={getFileTypesParams(type)}
+              searchText={search}
+              sort={sort}
+              key={user.$id}
+            />
+          </HydrationBoundary>
+        </section>
+      </>
+      <ErrorToast error={error} title="Something went wrong" />
     </div>
   );
 };

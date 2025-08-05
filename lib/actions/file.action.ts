@@ -28,7 +28,9 @@ export const createQueries = async (
   currentUserEmail: string,
   type: string[],
   searchText: string,
-  sort: string,
+  sort?: string,
+  limit?: number,
+  cursorAfter?: string,
 ) => {
   const queries = [
     Query.or([
@@ -39,6 +41,8 @@ export const createQueries = async (
 
   if (type.length) queries.push(Query.equal("type", type));
   if (searchText) queries.push(Query.contains("name", searchText));
+  if (limit) queries.push(Query.limit(limit));
+  if (cursorAfter) queries.push(Query.cursorAfter(cursorAfter));
 
   if (sort) {
     const [sortBy, orderBy] = sort.split("-");
@@ -64,8 +68,12 @@ export const getFiles = async (
       currentUserEmail,
       type,
       searchText = "",
-      sort = "$createdAt-desc",
+      sort,
+      limit,
+      cursorAfter,
     } = validationResult.params;
+
+    console.log("[GETFILES]", { sort });
 
     const { databases } = await createSessionClient();
 
@@ -75,6 +83,8 @@ export const getFiles = async (
       type,
       searchText,
       sort,
+      limit,
+      cursorAfter,
     );
 
     const files = await databases.listDocuments(
@@ -82,6 +92,9 @@ export const getFiles = async (
       appwriteConfig.filesCollectionId,
       queries,
     );
+
+    console.log("[GETFILES]", { total: files.total });
+
     return { success: true, data: files };
   } catch (err) {
     return handleError(err) as ErrorResponse;
@@ -260,16 +273,20 @@ export const deleteFile = async (
 
 export const getFileAnalytics = async ({
   userId,
+  type,
 }: GetFileAnalyticsParams): Promise<
   ActionResponse<GetFileAnalyticsResponse>
 > => {
   try {
     const { databases } = await createSessionClient();
 
+    const queries = [Query.equal("owner", [userId])];
+    if (type?.length) queries.push(Query.equal("type", type));
+
     const fileDocs = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
-      [Query.equal("owner", [userId])],
+      queries,
     );
 
     const files = fileDocs.documents;
@@ -283,6 +300,10 @@ export const getFileAnalytics = async ({
       const size = parseInt(file.size, 10);
       if (file.type === "document") {
         documents.usedSpace += size;
+        console.log("[GETFILEANALYTICS]", {
+          file,
+          documentSize: documents.usedSpace,
+        });
         if (
           !documents.lastUpdate ||
           new Date(file.$updatedAt) > new Date(documents.lastUpdate)
@@ -321,6 +342,12 @@ export const getFileAnalytics = async ({
       images.usedSpace +
       media.usedSpace +
       others.usedSpace;
+
+    // console.log("[GETFILEANALYTICS]", {
+    //   total: fileDocs.total,
+    //   totalImages: images,
+    //   files,
+    // });
 
     return {
       success: true,

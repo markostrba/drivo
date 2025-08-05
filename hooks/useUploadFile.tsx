@@ -9,6 +9,7 @@ import { NotFoundError } from "@/lib/http-errors";
 import { PLAN_FILE_RULES } from "@/constants";
 import handleError from "@/lib/handlers/error";
 import { Plans } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
 
 const client = new Client()
   .setEndpoint(appwriteConfig.endpointUrl)
@@ -28,6 +29,7 @@ type UploadResult =
 const useUploadFile = ({ ownerId }: Props) => {
   const canceledFiles = useRef<Set<string>>(new Set());
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const uploadFile = useCallback(
     async (
@@ -106,6 +108,9 @@ const useUploadFile = ({ ownerId }: Props) => {
             users: [],
           },
         );
+
+        queryClient.invalidateQueries({ queryKey: ["files"] });
+
         return { success: true };
       } catch (err) {
         console.log(err);
@@ -114,7 +119,7 @@ const useUploadFile = ({ ownerId }: Props) => {
         router.refresh();
       }
     },
-    [ownerId, router],
+    [ownerId, router, queryClient],
   );
 
   const cancelUploadFile = async (fileName: string) => {

@@ -9,14 +9,27 @@ import {
 } from "@/components/ui/select";
 import { usePathname, useRouter } from "next/navigation";
 import { sortTypes } from "@/constants";
+import { useEffect, useState } from "react";
+import { Skeleton } from "./ui/skeleton";
 
 const Sort = () => {
   const pathname = usePathname();
   const router = useRouter();
 
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   const handleSort = (value: string) => {
     router.push(`${pathname}?sort=${value}`);
   };
+
+  if (!isHydrated) {
+    return <Skeleton className="h-11 rounded-[8px] bg-black/5 sm:w-[210px]" />;
+  }
+
   return (
     <Select onValueChange={handleSort} defaultValue={sortTypes[0].value}>
       <SelectTrigger
